@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DIRUS — Landing Page
 
-## Getting Started
+Marketing landing page for **DIRUS**, the Autonomous Execution Operating System for insurance brokers, agencies and MGAs.
 
-First, run the development server:
+This repository contains **only the public website**. The DIRUS platform itself (agents, workflows, WhatsApp integration) lives outside this repo.
+
+## What is DIRUS
+
+Traditional CRMs demand constant manual data entry that advisors reject. DIRUS works the other way around: an **invisible interface** built on AI and WhatsApp that absorbs the heavy administrative work of an insurance agency.
+
+The goal, from first principles, is to turn the broker into an **operationally superhuman** one — breaking the linear relationship between policies under management and administrative hours, so a commercial team can multiply its capacity and premium volume without growing payroll.
+
+### Core pillars (MVP)
+
+- **Multimodal ingestion over WhatsApp (Ingestion Agent)** — Clients and brokers forward voice notes, photos of vehicle registrations, ID cards or PDFs to the system's WhatsApp number. The multimodal agent turns that chaos into clean structured data (name, ID, plate, coverage dates) in seconds and validates it.
+- **Zero-touch renewals (Renewal Agent)** — The heart of the business. A long-running workflow detects policies expiring in 30–45 days, checks whether the premium is still competitive, and runs contextual WhatsApp campaigns with the end client that end in a direct payment link. It handles objections autonomously and escalates to the human broker only on real friction.
+- **Broker Copilot** — An AI assistant that lets the broker run the business by voice or chat instead of navigating dashboards: reminders, the week's renewals, or a personalized message drafted straight from a WhatsApp audio.
+
+### Later phases
+
+- **AI claims handling, 24/7** — The client reports an incident over WhatsApp. The AI guides the report, requests photos, assesses damage with computer vision, validates coverage and deductibles, and approves repair-shop orders or reimbursements in minutes. Severe or injury claims trigger emergency protocols and escalate to a human adjuster with the case file already written.
+- **Autonomous cross-selling on life events** — The AI watches conversation threads for personal milestones (a move, an upcoming trip) and generates hyper-personalized proposals — home or travel coverage — raising portfolio LTV without human effort.
+- **Intelligent document hub** — A unified repository where the AI organizes policies, riders, terms, endorsements and identity documents per client, and answers complex natural-language questions about coverage and deductibles without anyone opening a PDF.
+
+### Strategic differentiators
+
+- **Exception-based invisible interface** — The broker never logs in to record data. DIRUS runs silently in the background and surfaces work through a unified inbox (Chatwoot) only for the ~5% of interactions that need empathy, signatures or human judgment.
+- **Data flywheel as a moat** — Every broker correction in chat feeds the trace system, training proprietary models on local jargon, objections and claims patterns — a barrier generalist tooling cannot replicate.
+- **Low-cost infrastructure** — Agent orchestration with long-running, pausable workflows (Mastra), async queues for heavy audio processing (Trigger.dev), transactional database with vectors (Neon/pgvector), and a direct connection to Meta's WhatsApp Cloud API to avoid intermediary fees.
+
+## Tech stack
+
+- [Next.js](https://nextjs.org) 16 (App Router)
+- React 19
+- Tailwind CSS 4
+- TypeScript 5
+- pnpm as the only package manager
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`npm` and `yarn` installs are blocked by the `preinstall` guard — this project is pnpm-only, pinned via the `packageManager` field.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scripts
 
-## Learn More
+| Command      | Description                  |
+| ------------ | ---------------------------- |
+| `pnpm dev`   | Start the development server |
+| `pnpm build` | Production build             |
+| `pnpm start` | Serve the production build   |
+| `pnpm lint`  | Run ESLint                   |
 
-To learn more about Next.js, take a look at the following resources:
+## Project structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/app/        App Router pages, layout and global styles
+public/         Static assets
+```

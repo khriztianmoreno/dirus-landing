@@ -1,8 +1,15 @@
 {
-  "name": "web",
+  "name": "dirus-landing",
   "version": "0.1.0",
   "private": true,
+  "description": "Landing page for DIRUS, the Autonomous Execution Operating System for insurance brokers.",
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=10"
+  },
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -20,7 +27,13 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.2",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "unrs-resolver"
+    ]
   }
 }

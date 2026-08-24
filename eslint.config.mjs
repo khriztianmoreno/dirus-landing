@@ -2,6 +2,7 @@ import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 import jsxA11y from "eslint-plugin-jsx-a11y";
+import prettierConfig from "eslint-config-prettier/flat";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -25,6 +26,10 @@ const eslintConfig = defineConfig([
       ],
     },
   },
+  // Prettier owns formatting. This must stay last so it can switch off every
+  // stylistic rule the configs above enable, leaving ESLint to report only
+  // correctness and accessibility problems.
+  prettierConfig,
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
@@ -32,6 +37,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Generated test output.
+    "coverage/**",
   ]),
 ]);
 

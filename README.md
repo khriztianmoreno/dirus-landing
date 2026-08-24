@@ -38,27 +38,298 @@ The goal, from first principles, is to turn the broker into an **operationally s
 
 ## Getting started
 
+### Requirements
+
+| Tool    | Version                   | Why                                           |
+| ------- | ------------------------- | --------------------------------------------- |
+| Node.js | 22 (see `.nvmrc`)         | `nvm use` picks it up automatically           |
+| pnpm    | 10 (see `packageManager`) | `corepack enable` installs the pinned version |
+
+This project is **pnpm-only**. `npm install` and `yarn install` fail on purpose, through the `preinstall` guard — a second lockfile in the tree would let two developers resolve different dependency versions from the same commit.
+
+### Running it
+
 ```bash
+git clone git@github.com:khriztianmoreno/dirus-landing.git
+cd dirus-landing
+nvm use          # or install Node 22 by other means
+corepack enable  # makes pnpm 10 available
 pnpm install
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000). You land on `/es`; `/en` serves the English variant.
 
-`npm` and `yarn` installs are blocked by the `preinstall` guard — this project is pnpm-only, pinned via the `packageManager` field.
+### Before you push
+
+```bash
+pnpm format && pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm build
+```
+
+That is the same sequence CI runs, in the same order. Running it locally turns a ten-minute round trip through CI into ten seconds.
+
+## Environment variables
+
+**There are none, and nothing here reads `process.env`.** The site is fully static: copy lives in `src/content/`, and there is no API, database or third-party service behind it yet. No `.env` file is needed to run or build the project.
+
+Two things will need one, and neither is decided yet:
+
+| Variable               | Needed for                                                                                            | Blocked on            |
+| ---------------------- | ----------------------------------------------------------------------------------------------------- | --------------------- |
+| `NEXT_PUBLIC_SITE_URL` | `metadataBase`, so Open Graph and canonical URLs resolve against the real domain instead of localhost | The production domain |
+| Analytics key          | Whatever analytics tool gets chosen                                                                   | That choice           |
+
+When the first one arrives, add it to `.env.example` with a comment, commit that file, and keep `.env.local` out of git — it is already ignored.
 
 ## Scripts
 
-| Command      | Description                  |
-| ------------ | ---------------------------- |
-| `pnpm dev`   | Start the development server |
-| `pnpm build` | Production build             |
-| `pnpm start` | Serve the production build   |
-| `pnpm lint`  | Run ESLint                   |
+| Command              | What it does                                          |
+| -------------------- | ----------------------------------------------------- |
+| `pnpm dev`           | Start the development server on http://localhost:3000 |
+| `pnpm build`         | Production build (also type-checks)                   |
+| `pnpm start`         | Serve the production build — run `build` first        |
+| `pnpm test`          | Run the test suite once                               |
+| `pnpm test:watch`    | Re-run tests as files change                          |
+| `pnpm test:coverage` | Run tests and enforce the 90% coverage gate           |
+| `pnpm lint`          | Run ESLint (correctness and accessibility)            |
+| `pnpm format`        | Format the codebase with Prettier                     |
+| `pnpm format:check`  | Verify formatting without writing — what CI runs      |
+| `pnpm typecheck`     | Generate route types, then run `tsc --noEmit`         |
+
+`preinstall` is a guard, not a script anyone runs: it blocks `npm` and `yarn` installs.
+
+## Contributing
+
+### 1. Branch from `develop`
+
+`main` is the production branch; `develop` is where work integrates. Never commit to either directly — both are protected, and a direct push bypasses every check in this README.
+
+```bash
+git switch develop && git pull
+git switch -c <type>/<short-description>
+```
+
+Branch names use the commit type as their prefix: `feat/`, `fix/`, `chore/`, `docs/`, `refactor/`, `test/`, `ci/`.
+
+### 2. Commit in work units
+
+[Conventional Commits](https://www.conventionalcommits.org): `type(scope): description`.
+
+A commit is one deliverable change, not one file type. Tests belong with the behaviour they verify, and documentation belongs with the change it explains — a separate "update docs" commit misrepresents when the decision was made.
+
+Write the _why_ in the body. The diff already shows what changed; what it cannot show is the alternative you rejected and the reason.
+
+### 3. Open a pull request against `develop`
+
+```bash
+git push -u origin <your-branch>
+gh pr create --base develop
+```
+
+The PR must state what changed and how you verified it. If a step could not be verified, say so — an unverified claim in a PR description is worse than an admitted gap, because it stops the reviewer from looking.
+
+Open it as a **draft** when the branch will carry several commits: CI then validates every push instead of only the final one.
+
+### 4. Green CI, then review
+
+Branch protection requires the `Typecheck, lint and build` status check and one approving review. GitHub does not let you approve your own pull request, so a solo change needs a second pair of eyes or an explicit admin merge.
+
+## Troubleshooting
+
+Every entry below is something that actually happened while building this repo.
+
+### `pnpm test -- --coverage` reports no coverage
+
+pnpm swallows the `--`, so the flag never reaches Vitest. The suite runs without coverage **and exits 0** — it looks like a passing coverage run and is not one.
+
+Use `pnpm test:coverage`, which is what CI runs.
+
+### `npm install` fails with `Cannot read properties of null (reading 'matches')`
+
+You ran `npm install` in a pnpm-only project. The install does fail — which is the point — but npm 10 crashes on this dependency tree before it reaches the `preinstall` guard, so you never see the guard's actual message. Running `npx only-allow pnpm` on its own prints it:
+
+```
+Use "pnpm install" for installation in this project.
+```
+
+Use `pnpm install`. If pnpm is missing, `corepack enable` installs the pinned version.
+
+The cryptic error is documented here rather than explained, because the crash comes from inside npm and the cause was not worth chasing: the fix is the same either way.
+
+### Typecheck fails on `LayoutProps` / `PageProps` after moving route files
+
+`.next/types/` still describes the old routes. Those globals are generated by Next.js, so a stale `.next` reports errors for files that no longer exist.
+
+```bash
+rm -rf .next && pnpm typecheck
+```
+
+### Coverage fails on branches you cannot reach
+
+Usually a `?? ""` or `?.` added to satisfy `noUncheckedIndexedAccess` on an expression that can never actually be nullish. The fix is deleting the unreachable branch, not lowering the threshold or ignoring the line — a branch no input can reach is dead code, and the gate is right to flag it.
+
+### A pull request waits forever on a status check
+
+Branch protection requires the exact context `Typecheck, lint and build`. Renaming the CI job leaves every PR waiting on a check that no longer reports. Renaming means updating the job and both branch protection rules in the same change.
+
+### A commit is rejected when merging to `main`
+
+`main` requires signed commits. Configure SSH or GPG signing before promoting work there; `develop` does not require it.
+
+### The dev server shows stale styles or routes
+
+```bash
+rm -rf .next && pnpm dev
+```
+
+Next.js caches aggressively between runs, and moved or renamed route files are the usual trigger.
+
+## Styling
+
+Tailwind CSS v4 is wired through PostCSS (`postcss.config.mjs`) and configured **in CSS**, inside `src/app/globals.css`. There is no `tailwind.config.ts`: v4 replaced the JavaScript config with the `@theme` directive, and every custom property declared there becomes a utility class (`--color-brand-500` produces `bg-brand-500`, `text-brand-500`, …).
+
+Brand tokens land in the `@theme` block, in the sections already marked for M02. Until then the block only carries neutral surfaces and the `next/font` wiring from `layout.tsx`.
+
+### Content detection
+
+v4 scans for utility classes automatically, starting from the CSS file and walking up, skipping `node_modules` and anything in `.gitignore`. `src/app/`, `src/components/` and `src/content/` are all covered with no configuration — verified by placing a file with a unique arbitrary utility in each directory and confirming the generated rule in the build output.
+
+Explicit `@source` directives are therefore unnecessary and were deliberately not added: they would restate what already happens and drift out of date. Add one only for a directory automatic detection cannot reach — content living outside the project root, or classes coming from a dependency.
+
+## Internationalization
+
+Spanish (`es`) is the default and the source of truth for copy; English (`en`) is available. Routing uses the App Router's `[locale]` segment plus a proxy — no external i18n library, since locale detection here is one Accept-Language parse.
+
+| Request         | Response                                                      |
+| --------------- | ------------------------------------------------------------- |
+| `/`             | `307` to `/es`, or `/en` when Accept-Language prefers English |
+| `/es`, `/en`    | `200`, prerendered                                            |
+| `/pricing`      | `307` to `/es/pricing` — a locale-less path keeps its path    |
+| `/fr`, `/pt-BR` | `404`                                                         |
+
+### `proxy.ts`, not `middleware.ts`
+
+The `middleware.js` file convention is **deprecated in Next.js 16** and renamed to `proxy.js`. Same behaviour, different file and export name. Existing projects can migrate with `npx @next/codemod@canary middleware-to-proxy .`.
+
+### Why an invalid locale 404s instead of redirecting
+
+Every route lives under `/[locale]`, so a locale-shaped first segment — two letters, optionally with a region — is always a locale attempt rather than a page name. The proxy leaves those alone and the route segment calls `notFound()`.
+
+The alternative, redirecting `/fr` to `/es/fr`, answers an invalid locale with a `307` pointing at a page that does not exist, and serves Spanish content under a URL that claims to be French. A path that is not locale-shaped, like `/pricing`, still gets prefixed.
+
+### Adding a locale
+
+`src/lib/i18n/config.ts` is the single source of truth. Add the code to `locales`, add a matching folder under `src/content/`, and the type checker will point at every remaining gap — `getDictionary` will not compile until the new locale has a dictionary.
+
+## Testing
+
+**Vitest**, with React Testing Library and jsdom.
+
+### Why Vitest over Jest
+
+- **ESM and TypeScript work without a transform layer.** Next.js 16 is ESM-first; Jest still needs `babel-jest` or `ts-jest` plus `transformIgnorePatterns` maintenance to keep up with dependencies that ship ESM only. Vitest runs the same Vite pipeline the app already uses.
+- **One resolver instead of two.** `vite-tsconfig-paths` reads the `@/*` alias straight from `tsconfig.json`, so path mapping cannot drift out of sync the way a hand-maintained `moduleNameMapper` does.
+- **Next.js documents this path.** The framework's own testing guide covers the Vitest setup used here.
+
+Jest remains the safer pick for a codebase with an existing Jest investment or heavy reliance on its module mocking. Neither applies to a landing page starting from zero.
+
+**Known limitation:** Vitest cannot run `async` Server Components. Those need end-to-end tests, not unit tests.
+
+### Coverage
+
+`pnpm test:coverage` enforces a 90% threshold on statements, branches, functions and lines, and exits non-zero when any of them falls short — verified by dropping an uncovered module in and confirming all four thresholds fail.
+
+> Run coverage through `pnpm test:coverage` or `pnpm test --coverage`. **`pnpm test -- --coverage` silently drops the flag**, runs without coverage and still exits 0 — it looks like a passing coverage run and is not one.
+
+#### Coverage exceptions
+
+- **`src/app/**` is excluded.** Route files are async Server Components, which Vitest cannot render, and they are kept deliberately thin: they resolve `params`, validate the locale and delegate. The logic they delegate to — everything in `src/lib/` and `src/components/` — is covered, and the routes themselves are verified against a running production server.
+
+Everything outside that exclusion currently sits at 100% on all four metrics. When the gate flagged branches at 87.5%, the fix was deleting unreachable `?? ""` fallbacks rather than lowering the threshold — a branch no input can reach is dead code, and the gate was right to say so.
+
+## Linting and formatting
+
+The two tools have separate jobs and do not overlap:
+
+- **Prettier owns formatting.** Configured in `prettier.config.mjs`, applied with `pnpm format`.
+- **ESLint owns correctness and accessibility.** `eslint.config.mjs` layers the full `eslint-plugin-jsx-a11y` recommended set (34 rules) on top of `eslint-config-next`, so accessibility problems surface while writing the code rather than in an audit later.
+
+`eslint-config-prettier` is applied **last** in the flat config. It switches off every stylistic rule the other configs enable, so the two tools can never disagree about the same line — a classic source of unfixable lint errors.
+
+Both run in CI, so formatting drift fails the build instead of turning up as noise in someone else's diff.
+
+## Continuous integration
+
+`.github/workflows/ci.yml` runs on every push and pull request against `main` and `develop`. Steps run in order and the job stops at the first failure:
+
+1. `pnpm install --frozen-lockfile` — fails if `pnpm-lock.yaml` is out of sync with `package.json`
+2. `pnpm format:check`
+3. `pnpm lint`
+4. `pnpm typecheck`
+5. `pnpm test:coverage` — the suite plus the 90% gate
+6. `pnpm build`
+
+The coverage report is uploaded as an artifact even when the run fails, since a failed gate is exactly when someone needs to see which lines are uncovered.
+
+`pnpm typecheck` runs `next typegen` first: types such as `LayoutProps` are generated by Next.js into `.next/types/`, so on a clean checkout `tsc` alone would fail on globals that do not exist yet.
+
+The Node version comes from `.nvmrc` and the pnpm version from the `packageManager` field, so CI and local development always run the same toolchain.
+
+### Caching
+
+Two caches, neither of them `node_modules`:
+
+- **The pnpm store**, via `setup-node`'s `cache: pnpm`, keyed on the lockfile. `node_modules` itself is deliberately not cached: pnpm builds it out of symlinks into that store, so a restored `node_modules` without a matching store is a tree of broken links. Caching the store and re-linking with `--frozen-lockfile` is both faster and correct.
+- **`.next/cache`**, so Next.js can reuse compilation work between runs instead of rebuilding from scratch.
+
+### One note on the job name
+
+The job is still called `Typecheck, lint and build` even though it now also formats, tests and measures coverage. Branch protection on `main` and `develop` requires that exact status check context — renaming the job leaves every pull request waiting on a check that no longer reports. Renaming it means updating both branch protection rules in the same change.
+
+## Type safety
+
+TypeScript runs in `strict` mode plus these additional checks, enforced by `pnpm typecheck` and by `pnpm build`:
+
+| Flag                         | Why                                                                                                                                                 |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `strict`                     | Enables the full strict family (`strictNullChecks`, `noImplicitAny`, …)                                                                             |
+| `noUncheckedIndexedAccess`   | Indexed access (`arr[i]`, `record[key]`) yields `T \| undefined`, so out-of-range and missing-key reads must be handled instead of silently trusted |
+| `noImplicitOverride`         | Class members that override a base member must say `override`, so a renamed base method fails to compile instead of quietly becoming dead code      |
+| `noFallthroughCasesInSwitch` | Catches a missing `break` in a `switch`                                                                                                             |
+| `noImplicitReturns`          | Every code path of a function returning a value must actually return one                                                                            |
+| `useUnknownInCatchVariables` | `catch (e)` is typed `unknown`, forcing a narrowing check before use                                                                                |
+
+### Documented exceptions
+
+- **`exactOptionalPropertyTypes` is intentionally off.** It distinguishes "property absent" from "property set to `undefined`", which conflicts with the common React pattern of spreading optional props (`<C {...{ title }} />`) and with several third-party component typings. The friction is not worth it for a marketing site; revisit if a shared internal component library appears.
+- **`noUnusedLocals` / `noUnusedParameters` are off on purpose.** ESLint already reports unused variables, and having the compiler fail on them makes intermediate states during development painful. Linting is the right layer for this, not compilation.
+- **`skipLibCheck` stays on**, inherited from the Next.js default. Type-checking all of `node_modules` costs build time to surface errors in dependencies we cannot fix.
 
 ## Project structure
 
 ```
-src/app/        App Router pages, layout and global styles
-public/         Static assets
+src/app/                  App Router pages, layout and the Tailwind theme
+src/components/
+  layout/                 Page shell: header, footer, containers
+  navigation/             Menus, links, language switcher
+  sections/               Landing-page bands: hero, pillars, CTA
+  ui/                     Presentational primitives: button, card, badge
+  webgl/                  Canvas and shader work, with fallbacks
+src/content/
+  es/                     Spanish copy — the source of truth
+  en/                     English copy, translated from es/
+src/lib/
+  i18n/                   Locale detection, routing, dictionaries
+  seo/                    Metadata, structured data, sitemap helpers
+  utils/                  Small shared helpers
+src/styles/               Stylesheets that are not the global theme
+public/                   Static assets
 ```
+
+Each folder carries a `README.md` describing what belongs in it and what does
+not. They are documentation, not barrels: an empty `index.ts` in every folder
+would be dead code, would invite circular imports once the barrels grow, and —
+being untested modules — would drag the 90% coverage gate below its threshold
+from day one.
+
+The set of folders matches the brief exactly. No extras were added.

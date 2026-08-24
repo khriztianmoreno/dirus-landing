@@ -68,6 +68,31 @@ v4 scans for utility classes automatically, starting from the CSS file and walki
 
 Explicit `@source` directives are therefore unnecessary and were deliberately not added: they would restate what already happens and drift out of date. Add one only for a directory automatic detection cannot reach — content living outside the project root, or classes coming from a dependency.
 
+## Internationalization
+
+Spanish (`es`) is the default and the source of truth for copy; English (`en`) is available. Routing uses the App Router's `[locale]` segment plus a proxy — no external i18n library, since locale detection here is one Accept-Language parse.
+
+| Request         | Response                                                      |
+| --------------- | ------------------------------------------------------------- |
+| `/`             | `307` to `/es`, or `/en` when Accept-Language prefers English |
+| `/es`, `/en`    | `200`, prerendered                                            |
+| `/pricing`      | `307` to `/es/pricing` — a locale-less path keeps its path    |
+| `/fr`, `/pt-BR` | `404`                                                         |
+
+### `proxy.ts`, not `middleware.ts`
+
+The `middleware.js` file convention is **deprecated in Next.js 16** and renamed to `proxy.js`. Same behaviour, different file and export name. Existing projects can migrate with `npx @next/codemod@canary middleware-to-proxy .`.
+
+### Why an invalid locale 404s instead of redirecting
+
+Every route lives under `/[locale]`, so a locale-shaped first segment — two letters, optionally with a region — is always a locale attempt rather than a page name. The proxy leaves those alone and the route segment calls `notFound()`.
+
+The alternative, redirecting `/fr` to `/es/fr`, answers an invalid locale with a `307` pointing at a page that does not exist, and serves Spanish content under a URL that claims to be French. A path that is not locale-shaped, like `/pricing`, still gets prefixed.
+
+### Adding a locale
+
+`src/lib/i18n/config.ts` is the single source of truth. Add the code to `locales`, add a matching folder under `src/content/`, and the type checker will point at every remaining gap — `getDictionary` will not compile until the new locale has a dictionary.
+
 ## Testing
 
 **Vitest**, with React Testing Library and jsdom.
@@ -90,7 +115,9 @@ Jest remains the safer pick for a codebase with an existing Jest investment or h
 
 #### Coverage exceptions
 
-- **`src/app/layout.tsx` is excluded.** It is a composition root: it renders `<html>`/`<body>` and wires `next/font`. Rendering it in jsdom asserts on framework internals rather than on our own logic, and the invalid nesting it produces in a test container makes the exercise misleading. Its behaviour is covered by the build and by end-to-end tests once those exist.
+- **`src/app/**` is excluded.** Route files are async Server Components, which Vitest cannot render, and they are kept deliberately thin: they resolve `params`, validate the locale and delegate. The logic they delegate to — everything in `src/lib/` and `src/components/` — is covered, and the routes themselves are verified against a running production server.
+
+Everything outside that exclusion currently sits at 100% on all four metrics. When the gate flagged branches at 87.5%, the fix was deleting unreachable `?? ""` fallbacks rather than lowering the threshold — a branch no input can reach is dead code, and the gate was right to say so.
 
 ## Linting and formatting
 

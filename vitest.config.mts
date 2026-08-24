@@ -14,10 +14,11 @@ export default defineConfig({
       include: ["src/**/*.{ts,tsx}"],
       exclude: [
         "src/**/*.{test,spec}.{ts,tsx}",
-        // Composition root: it renders <html>/<body> and wires next/font.
-        // Rendering it in jsdom asserts on framework internals, not on our
-        // own logic. See README, "Coverage exceptions".
-        "src/app/layout.tsx",
+        // App Router route files. They are async Server Components, which
+        // Vitest cannot render, and they are kept deliberately thin: they
+        // resolve params and delegate. The logic they delegate to — lib/ and
+        // components/ — is covered. See README, "Coverage exceptions".
+        "src/app/**",
       ],
       thresholds: {
         statements: 90,

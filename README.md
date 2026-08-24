@@ -144,9 +144,17 @@ pnpm swallows the `--`, so the flag never reaches Vitest. The suite runs without
 
 Use `pnpm test:coverage`, which is what CI runs.
 
-### `npm install` fails with "Use pnpm"
+### `npm install` fails with `Cannot read properties of null (reading 'matches')`
 
-Working as intended — the `preinstall` guard. Use `pnpm install`. If pnpm is missing, `corepack enable` installs the pinned version.
+You ran `npm install` in a pnpm-only project. The install does fail — which is the point — but npm 10 crashes on this dependency tree before it reaches the `preinstall` guard, so you never see the guard's actual message. Running `npx only-allow pnpm` on its own prints it:
+
+```
+Use "pnpm install" for installation in this project.
+```
+
+Use `pnpm install`. If pnpm is missing, `corepack enable` installs the pinned version.
+
+The cryptic error is documented here rather than explained, because the crash comes from inside npm and the cause was not worth chasing: the fix is the same either way.
 
 ### Typecheck fails on `LayoutProps` / `PageProps` after moving route files
 

@@ -153,8 +153,28 @@ TypeScript runs in `strict` mode plus these additional checks, enforced by `pnpm
 ## Project structure
 
 ```
-src/app/          App Router pages, layout and global styles (theme tokens)
-src/components/   Reusable UI components
-src/content/      Marketing copy and long-form content
-public/           Static assets
+src/app/                  App Router pages, layout and the Tailwind theme
+src/components/
+  layout/                 Page shell: header, footer, containers
+  navigation/             Menus, links, language switcher
+  sections/               Landing-page bands: hero, pillars, CTA
+  ui/                     Presentational primitives: button, card, badge
+  webgl/                  Canvas and shader work, with fallbacks
+src/content/
+  es/                     Spanish copy — the source of truth
+  en/                     English copy, translated from es/
+src/lib/
+  i18n/                   Locale detection, routing, dictionaries
+  seo/                    Metadata, structured data, sitemap helpers
+  utils/                  Small shared helpers
+src/styles/               Stylesheets that are not the global theme
+public/                   Static assets
 ```
+
+Each folder carries a `README.md` describing what belongs in it and what does
+not. They are documentation, not barrels: an empty `index.ts` in every folder
+would be dead code, would invite circular imports once the barrels grow, and —
+being untested modules — would drag the 90% coverage gate below its threshold
+from day one.
+
+The set of folders matches the brief exactly. No extras were added.

@@ -56,6 +56,18 @@ Open [http://localhost:3000](http://localhost:3000).
 | `pnpm start` | Serve the production build   |
 | `pnpm lint`  | Run ESLint                   |
 
+## Styling
+
+Tailwind CSS v4 is wired through PostCSS (`postcss.config.mjs`) and configured **in CSS**, inside `src/app/globals.css`. There is no `tailwind.config.ts`: v4 replaced the JavaScript config with the `@theme` directive, and every custom property declared there becomes a utility class (`--color-brand-500` produces `bg-brand-500`, `text-brand-500`, …).
+
+Brand tokens land in the `@theme` block, in the sections already marked for M02. Until then the block only carries neutral surfaces and the `next/font` wiring from `layout.tsx`.
+
+### Content detection
+
+v4 scans for utility classes automatically, starting from the CSS file and walking up, skipping `node_modules` and anything in `.gitignore`. `src/app/`, `src/components/` and `src/content/` are all covered with no configuration — verified by placing a file with a unique arbitrary utility in each directory and confirming the generated rule in the build output.
+
+Explicit `@source` directives are therefore unnecessary and were deliberately not added: they would restate what already happens and drift out of date. Add one only for a directory automatic detection cannot reach — content living outside the project root, or classes coming from a dependency.
+
 ## Continuous integration
 
 `.github/workflows/ci.yml` runs on every push and pull request against `main` and `develop`, in this order:
@@ -91,6 +103,8 @@ TypeScript runs in `strict` mode plus these additional checks, enforced by `pnpm
 ## Project structure
 
 ```
-src/app/        App Router pages, layout and global styles
-public/         Static assets
+src/app/          App Router pages, layout and global styles (theme tokens)
+src/components/   Reusable UI components
+src/content/      Marketing copy and long-form content
+public/           Static assets
 ```

@@ -1,15 +1,19 @@
 @import "tailwindcss";
 
+/*
+ * Design tokens.
+ *
+ * Tailwind v4 is configured here, in CSS — there is no `tailwind.config.ts`.
+ * Every custom property declared inside `@theme` becomes a utility class:
+ * `--color-brand-500` generates `bg-brand-500`, `text-brand-500`, and so on.
+ *
+ * M02 (brand identity) fills the sections marked below. Until then this file
+ * only carries the neutral surface tokens and the font wiring from the layout.
+ */
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -19,8 +23,22 @@
   }
 }
 
+@theme inline {
+  /* Surfaces — placeholder neutrals, replaced by brand tokens in M02. */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* Typography — font families are injected by next/font in layout.tsx. */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* M02 — brand palette goes here (--color-brand-*, --color-accent-*). */
+
+  /* M02 — type scale, radii and shadows go here. */
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
 }

@@ -15,6 +15,9 @@ permissions:
 
 jobs:
   quality:
+    # Renaming this job would break branch protection on main and develop:
+    # both require this exact status check context, and a renamed job leaves
+    # every pull request waiting on a check that no longer reports.
     name: Typecheck, lint and build
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -27,6 +30,7 @@ jobs:
         uses: pnpm/action-setup@v6
 
       - name: Setup Node
+        # Caches the pnpm content-addressable store, keyed on pnpm-lock.yaml.
         uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
@@ -35,17 +39,41 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Typecheck
-        run: pnpm typecheck
-
       - name: Format check
         run: pnpm format:check
 
       - name: Lint
         run: pnpm lint
 
-      - name: Test with coverage
+      - name: Typecheck
+        run: pnpm typecheck
+
+      # Coverage runs the suite, so a separate plain test step would execute
+      # every test twice for no extra signal. The 90% thresholds on
+      # statements, branches, functions and lines live in vitest.config.mts
+      # and exit non-zero when any of them falls short.
+      - name: Unit tests and coverage (90% gate)
         run: pnpm test:coverage
+
+      - name: Upload coverage report
+        # Runs even when the gate fails — that is exactly when someone needs
+        # to see which lines are uncovered.
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Cache Next.js build
+        uses: actions/cache@v6
+        with:
+          path: .next/cache
+          key: next-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('src/**/*.{ts,tsx}', '*.{ts,mts,mjs}') }}
+          restore-keys: |
+            next-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
+            next-${{ runner.os }}-
 
       - name: Build
         run: pnpm build

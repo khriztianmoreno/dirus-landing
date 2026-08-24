@@ -38,23 +38,143 @@ The goal, from first principles, is to turn the broker into an **operationally s
 
 ## Getting started
 
+### Requirements
+
+| Tool    | Version                   | Why                                           |
+| ------- | ------------------------- | --------------------------------------------- |
+| Node.js | 22 (see `.nvmrc`)         | `nvm use` picks it up automatically           |
+| pnpm    | 10 (see `packageManager`) | `corepack enable` installs the pinned version |
+
+This project is **pnpm-only**. `npm install` and `yarn install` fail on purpose, through the `preinstall` guard — a second lockfile in the tree would let two developers resolve different dependency versions from the same commit.
+
+### Running it
+
 ```bash
+git clone git@github.com:khriztianmoreno/dirus-landing.git
+cd dirus-landing
+nvm use          # or install Node 22 by other means
+corepack enable  # makes pnpm 10 available
 pnpm install
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000). You land on `/es`; `/en` serves the English variant.
 
-`npm` and `yarn` installs are blocked by the `preinstall` guard — this project is pnpm-only, pinned via the `packageManager` field.
+### Before you push
+
+```bash
+pnpm format && pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm build
+```
+
+That is the same sequence CI runs, in the same order. Running it locally turns a ten-minute round trip through CI into ten seconds.
+
+## Environment variables
+
+**There are none, and nothing here reads `process.env`.** The site is fully static: copy lives in `src/content/`, and there is no API, database or third-party service behind it yet. No `.env` file is needed to run or build the project.
+
+Two things will need one, and neither is decided yet:
+
+| Variable               | Needed for                                                                                            | Blocked on            |
+| ---------------------- | ----------------------------------------------------------------------------------------------------- | --------------------- |
+| `NEXT_PUBLIC_SITE_URL` | `metadataBase`, so Open Graph and canonical URLs resolve against the real domain instead of localhost | The production domain |
+| Analytics key          | Whatever analytics tool gets chosen                                                                   | That choice           |
+
+When the first one arrives, add it to `.env.example` with a comment, commit that file, and keep `.env.local` out of git — it is already ignored.
 
 ## Scripts
 
-| Command      | Description                  |
-| ------------ | ---------------------------- |
-| `pnpm dev`   | Start the development server |
-| `pnpm build` | Production build             |
-| `pnpm start` | Serve the production build   |
-| `pnpm lint`  | Run ESLint                   |
+| Command              | What it does                                          |
+| -------------------- | ----------------------------------------------------- |
+| `pnpm dev`           | Start the development server on http://localhost:3000 |
+| `pnpm build`         | Production build (also type-checks)                   |
+| `pnpm start`         | Serve the production build — run `build` first        |
+| `pnpm test`          | Run the test suite once                               |
+| `pnpm test:watch`    | Re-run tests as files change                          |
+| `pnpm test:coverage` | Run tests and enforce the 90% coverage gate           |
+| `pnpm lint`          | Run ESLint (correctness and accessibility)            |
+| `pnpm format`        | Format the codebase with Prettier                     |
+| `pnpm format:check`  | Verify formatting without writing — what CI runs      |
+| `pnpm typecheck`     | Generate route types, then run `tsc --noEmit`         |
+
+`preinstall` is a guard, not a script anyone runs: it blocks `npm` and `yarn` installs.
+
+## Contributing
+
+### 1. Branch from `develop`
+
+`main` is the production branch; `develop` is where work integrates. Never commit to either directly — both are protected, and a direct push bypasses every check in this README.
+
+```bash
+git switch develop && git pull
+git switch -c <type>/<short-description>
+```
+
+Branch names use the commit type as their prefix: `feat/`, `fix/`, `chore/`, `docs/`, `refactor/`, `test/`, `ci/`.
+
+### 2. Commit in work units
+
+[Conventional Commits](https://www.conventionalcommits.org): `type(scope): description`.
+
+A commit is one deliverable change, not one file type. Tests belong with the behaviour they verify, and documentation belongs with the change it explains — a separate "update docs" commit misrepresents when the decision was made.
+
+Write the _why_ in the body. The diff already shows what changed; what it cannot show is the alternative you rejected and the reason.
+
+### 3. Open a pull request against `develop`
+
+```bash
+git push -u origin <your-branch>
+gh pr create --base develop
+```
+
+The PR must state what changed and how you verified it. If a step could not be verified, say so — an unverified claim in a PR description is worse than an admitted gap, because it stops the reviewer from looking.
+
+Open it as a **draft** when the branch will carry several commits: CI then validates every push instead of only the final one.
+
+### 4. Green CI, then review
+
+Branch protection requires the `Typecheck, lint and build` status check and one approving review. GitHub does not let you approve your own pull request, so a solo change needs a second pair of eyes or an explicit admin merge.
+
+## Troubleshooting
+
+Every entry below is something that actually happened while building this repo.
+
+### `pnpm test -- --coverage` reports no coverage
+
+pnpm swallows the `--`, so the flag never reaches Vitest. The suite runs without coverage **and exits 0** — it looks like a passing coverage run and is not one.
+
+Use `pnpm test:coverage`, which is what CI runs.
+
+### `npm install` fails with "Use pnpm"
+
+Working as intended — the `preinstall` guard. Use `pnpm install`. If pnpm is missing, `corepack enable` installs the pinned version.
+
+### Typecheck fails on `LayoutProps` / `PageProps` after moving route files
+
+`.next/types/` still describes the old routes. Those globals are generated by Next.js, so a stale `.next` reports errors for files that no longer exist.
+
+```bash
+rm -rf .next && pnpm typecheck
+```
+
+### Coverage fails on branches you cannot reach
+
+Usually a `?? ""` or `?.` added to satisfy `noUncheckedIndexedAccess` on an expression that can never actually be nullish. The fix is deleting the unreachable branch, not lowering the threshold or ignoring the line — a branch no input can reach is dead code, and the gate is right to flag it.
+
+### A pull request waits forever on a status check
+
+Branch protection requires the exact context `Typecheck, lint and build`. Renaming the CI job leaves every PR waiting on a check that no longer reports. Renaming means updating the job and both branch protection rules in the same change.
+
+### A commit is rejected when merging to `main`
+
+`main` requires signed commits. Configure SSH or GPG signing before promoting work there; `develop` does not require it.
+
+### The dev server shows stale styles or routes
+
+```bash
+rm -rf .next && pnpm dev
+```
+
+Next.js caches aggressively between runs, and moved or renamed route files are the usual trigger.
 
 ## Styling
 

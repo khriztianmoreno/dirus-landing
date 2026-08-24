@@ -190,6 +190,50 @@ Tailwind CSS v4 is wired through PostCSS (`postcss.config.mjs`) and configured *
 
 Brand tokens land in the `@theme` block, in the sections already marked for M02. Until then the block only carries neutral surfaces and the `next/font` wiring from `layout.tsx`.
 
+### Colour tokens
+
+The palette comes from the "Obsidian Infrastructure" brief and lives in `src/app/globals.css`. Every token generates the full set of utilities, so `--color-graphite` gives `bg-graphite`, `text-graphite`, `border-graphite`.
+
+**Base — the monochromatic foundation.** Hierarchy comes from surface brightness, not drop shadows, so the dark values form a z-axis: the deeper the surface, the lower the value.
+
+| Token             | Value     | Use for                                                 |
+| ----------------- | --------- | ------------------------------------------------------- |
+| `black`           | `#000000` | Deep backgrounds                                        |
+| `near-black`      | `#0e0e0e` | Cards, the layer above the page                         |
+| `graphite`        | `#141313` | Default surface and page background                     |
+| `graphite-raised` | `#1c1b1b` | Modals, popovers, anything above a card                 |
+| `white`           | `#ffffff` | High-priority typography and critical controls **only** |
+| `ink`             | `#e5e2e1` | Default body text                                       |
+| `soft-gray`       | `#c4c7c8` | Secondary and muted text                                |
+| `dark-gray`       | `#444748` | Borders, dividers, ghost outlines                       |
+
+**Accents — "data pulses".**
+
+| Token                | Value     | Use for                                                |
+| -------------------- | --------- | ------------------------------------------------------ |
+| `accent-blue`        | `#3d6bff` | Focus rings, active input underlines, live-state glows |
+| `accent-indigo`      | `#3626ce` | Primary actions, success states                        |
+| `accent-indigo-soft` | `#c3c0ff` | Indigo text or icons on a dark surface                 |
+| `accent-violet`      | `#8c2ae3` | Rare highlight — the least used colour in the system   |
+
+#### How to use them
+
+**Accents are signals, not decoration.** An accent on screen should mean something is happening: focus, activity, a primary action. If a view shows more than one accent at rest, that is a hierarchy problem wearing a colour costume.
+
+**White is not the body text colour.** The brief reserves pure white for high-priority typography, which is why `ink` exists. Using `text-white` everywhere flattens exactly the contrast the design depends on.
+
+**No soft purple gradients.** The generic indigo-to-violet wash reads as "AI startup", which is the opposite of positioning DIRUS as infrastructure. When a gradient is genuinely needed, make it sharp and linear — indigo to transparent — and only to show directionality in a data flow or to carry the logo motif.
+
+**Depth comes from the surface ramp**, not from shadows. Move up the ramp instead of adding a `shadow-*`, and use a `dark-gray` ghost border where a card edge needs definition.
+
+#### Two notes on the source
+
+**`accent-blue` is provisional.** The brief names "electric blue" in prose but never gives it a value, and its frontmatter contains no blue at all. `#3d6bff` was derived from the brief's own indigo hue to stay coherent with the family. It needs confirming against the real brand asset before any launch.
+
+**The brief contradicts itself on the surface ramp.** Its prose gives `#000` / `#0A0A0A` / `#141414`, its frontmatter `#0e0e0e` / `#141313` / `#1c1b1b`. The frontmatter values were used, since they are the machine-readable half and internally consistent across all surface roles.
+
+`src/styles/tokens.test.ts` asserts every value against this table and fails if a hex drifts, so a colour change has to be a deliberate edit to the brief, not a nudge that fixes one screen and moves the system.
+
 ### Content detection
 
 v4 scans for utility classes automatically, starting from the CSS file and walking up, skipping `node_modules` and anything in `.gitignore`. `src/app/`, `src/components/` and `src/content/` are all covered with no configuration — verified by placing a file with a unique arbitrary utility in each directory and confirming the generated rule in the build output.

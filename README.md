@@ -56,6 +56,17 @@ Open [http://localhost:3000](http://localhost:3000).
 | `pnpm start` | Serve the production build   |
 | `pnpm lint`  | Run ESLint                   |
 
+## Continuous integration
+
+`.github/workflows/ci.yml` runs on every push and pull request against `main` and `develop`, in this order:
+
+1. `pnpm install --frozen-lockfile` — fails if `pnpm-lock.yaml` is out of sync with `package.json`
+2. `pnpm typecheck`
+3. `pnpm lint`
+4. `pnpm build`
+
+The Node version comes from `.nvmrc` and the pnpm version from the `packageManager` field, so CI and local development always run the same toolchain.
+
 ## Type safety
 
 TypeScript runs in `strict` mode plus these additional checks, enforced by `pnpm typecheck` (`tsc --noEmit`) and by `pnpm build`:

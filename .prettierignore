@@ -1,0 +1,15 @@
+# Build output and generated files
+.next/
+out/
+build/
+next-env.d.ts
+
+# Dependencies and lockfiles
+node_modules/
+pnpm-lock.yaml
+
+# Files Prettier should not reformat
+public/
+
+# Agent tooling, not project source
+.atl/

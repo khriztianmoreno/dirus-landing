@@ -32,6 +32,10 @@ const base = {
 };
 
 const accents = {
+  // PROVISIONAL — not from the brief, which never assigns "electric blue" a
+  // value. Pinned so replacing it with the real brand colour is a deliberate
+  // edit here rather than a silent drift. See globals.css.
+  "accent-blue": "#3d6bff",
   "accent-indigo": "#3626ce",
   "accent-indigo-soft": "#c3c0ff",
   "accent-violet": "#8c2ae3",

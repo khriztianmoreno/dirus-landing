@@ -66,7 +66,14 @@
    * a hierarchy problem, not a colour problem.
    * ------------------------------------------------------------------ */
 
-  /* Focus rings, active input underlines, live-state glows. */
+  /* Focus rings, active input underlines, live-state glows.
+   *
+   * PROVISIONAL. The brief names "electric blue" in prose but gives it no
+   * value anywhere, and its frontmatter contains no blue at all. This hex was
+   * derived from the indigo above to stay in the same family. Confirm it
+   * against the real brand asset before launch — and when you replace it,
+   * update src/styles/tokens.test.ts, which pins this value on purpose so
+   * the swap cannot happen silently. */
   --color-accent-blue: #3d6bff;
   /* Primary actions and success states. */
   --color-accent-indigo: #3626ce;

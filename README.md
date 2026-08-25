@@ -180,6 +180,16 @@ Branch protection requires the exact context `Typecheck, lint and build`. Renami
 
 `main` requires signed commits. Configure SSH or GPG signing before promoting work there; `develop` does not require it.
 
+### commitlint warns about `footer-leading-blank` on a perfectly good message
+
+A line in your body starts with a word followed by a colon — `purpose: ...`, `enforcement: ...` — and commitlint reads it as a footer token rather than prose.
+
+It is a warning, not an error: the commit goes through. Rephrase the line if the noise bothers you. The rule stays on because it catches real footers (`BREAKING CHANGE:`, `Refs:`) that genuinely need a blank line before them.
+
+### A commit is rejected before it exists
+
+The `commit-msg` hook ran commitlint and the message does not match the convention. The output names the exact rule. Rewrite the message — do not reach for `--no-verify`, since CI runs the same check over every commit in the pull request and will reject it there instead, after a slower round trip.
+
 ### The dev server shows stale styles or routes
 
 ```bash

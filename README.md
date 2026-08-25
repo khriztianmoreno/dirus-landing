@@ -115,6 +115,10 @@ Branch names use the commit type as their prefix: `feat/`, `fix/`, `chore/`, `do
 
 [Conventional Commits](https://www.conventionalcommits.org): `type(scope): description`.
 
+**This is enforced, not suggested.** A `commit-msg` hook runs [commitlint](https://commitlint.js.org/) against `commitlint.config.mjs`, so a malformed message is rejected before the commit exists. The same check runs in CI over every commit in a pull request, because `--no-verify` skips the hook and a rule that can be skipped silently is a rule nobody follows.
+
+Allowed types: `build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style`, `test`. Subjects are capped at 72 characters — past that GitHub truncates them in list views. Scopes are optional: a change that genuinely spans the repo should not have to invent one. Merge commits are exempt, since their format is GitHub's, not yours.
+
 A commit is one deliverable change, not one file type. Tests belong with the behaviour they verify, and documentation belongs with the change it explains — a separate "update docs" commit misrepresents when the decision was made.
 
 Write the _why_ in the body. The diff already shows what changed; what it cannot show is the alternative you rejected and the reason.

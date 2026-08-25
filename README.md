@@ -115,6 +115,21 @@ Branch names use the commit type as their prefix: `feat/`, `fix/`, `chore/`, `do
 
 [Conventional Commits](https://www.conventionalcommits.org): `type(scope): description`.
 
+Two git hooks run, both installed by husky on `pnpm install`:
+
+| Hook         | Runs                                                               | Cost                                              |
+| ------------ | ------------------------------------------------------------------ | ------------------------------------------------- |
+| `pre-commit` | `lint-staged` — ESLint `--fix` then Prettier, on staged files only | ~1.3s here; scales with how many files you staged |
+| `commit-msg` | commitlint against `commitlint.config.mjs`                         | instant                                           |
+
+`lint-staged` fixes what it can and re-stages the result, so formatting never reaches a diff. What it cannot fix — an ESLint error such as an image without `alt` — blocks the commit and reverts the working tree to how you left it.
+
+Typecheck and the test suite are deliberately **not** in the hook. They are project-wide and cannot be scoped to a diff, so they would tax every commit for a signal CI already provides — and slow hooks are precisely why people reach for `--no-verify`.
+
+**This is enforced, not suggested.** A `commit-msg` hook runs [commitlint](https://commitlint.js.org/) against `commitlint.config.mjs`, so a malformed message is rejected before the commit exists. The same check runs in CI over every commit in a pull request, because `--no-verify` skips the hook and a rule that can be skipped silently is a rule nobody follows.
+
+Allowed types: `build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style`, `test`. Subjects are capped at 72 characters — past that GitHub truncates them in list views. Scopes are optional: a change that genuinely spans the repo should not have to invent one. Merge commits are exempt, since their format is GitHub's, not yours.
+
 A commit is one deliverable change, not one file type. Tests belong with the behaviour they verify, and documentation belongs with the change it explains — a separate "update docs" commit misrepresents when the decision was made.
 
 Write the _why_ in the body. The diff already shows what changed; what it cannot show is the alternative you rejected and the reason.
@@ -175,6 +190,22 @@ Branch protection requires the exact context `Typecheck, lint and build`. Renami
 ### A commit is rejected when merging to `main`
 
 `main` requires signed commits. Configure SSH or GPG signing before promoting work there; `develop` does not require it.
+
+### A commit is blocked by lint-staged
+
+ESLint found something it cannot fix automatically — most often a `jsx-a11y` rule, such as an image without `alt`. The output names the file and the rule.
+
+`lint-staged` reverts the working tree to exactly how you left it before failing, so nothing is lost. Fix the reported problem and commit again.
+
+### commitlint warns about `footer-leading-blank` on a perfectly good message
+
+A line in your body starts with a word followed by a colon — `purpose: ...`, `enforcement: ...` — and commitlint reads it as a footer token rather than prose.
+
+It is a warning, not an error: the commit goes through. Rephrase the line if the noise bothers you. The rule stays on because it catches real footers (`BREAKING CHANGE:`, `Refs:`) that genuinely need a blank line before them.
+
+### A commit is rejected before it exists
+
+The `commit-msg` hook ran commitlint and the message does not match the convention. The output names the exact rule. Rewrite the message — do not reach for `--no-verify`, since CI runs the same check over every commit in the pull request and will reject it there instead, after a slower round trip.
 
 ### The dev server shows stale styles or routes
 

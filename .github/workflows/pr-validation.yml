@@ -1,0 +1,112 @@
+name: PR Validation
+
+# `labeled` and `unlabeled` are what make the type:* check re-run after
+# someone fixes the labels; `edited` does the same for the body checks.
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize, labeled, unlabeled]
+    branches: [main, develop]
+
+concurrency:
+  group: pr-validation-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+jobs:
+  issue-reference:
+    # Renaming any job in this file breaks branch protection: the required
+    # status check is matched by job name, and a renamed job leaves every
+    # pull request waiting on a context that no longer reports.
+    name: Check Issue Reference
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      issue: ${{ steps.find.outputs.issue }}
+
+    steps:
+      - name: Find closing keyword
+        id: find
+        env:
+          # Through the environment, never inlined into the script: a pull
+          # request body is attacker-controlled text.
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          set -euo pipefail
+
+          issue=$(printf '%s' "$PR_BODY" \
+            | grep -oiE '\b(close[sd]?|fix(e[sd])?|resolve[sd]?)[[:space:]]+#[0-9]+' \
+            | grep -oE '[0-9]+' \
+            | head -n 1 || true)
+
+          if [ -z "$issue" ]; then
+            echo "::error::No linked issue found. Add 'Closes #<number>' to the pull request body."
+            exit 1
+          fi
+
+          echo "issue=$issue" >> "$GITHUB_OUTPUT"
+          echo "Linked issue: #$issue"
+
+  issue-approved:
+    name: Check Issue Has status:approved
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: issue-reference
+
+    steps:
+      - name: Verify label on linked issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          ISSUE: ${{ needs.issue-reference.outputs.issue }}
+        run: |
+          set -euo pipefail
+
+          # `gh issue view` resolves pull requests too, so reject those before
+          # trusting the labels: a PR linking another PR is not an approval.
+          if ! payload=$(gh api "repos/$GH_REPO/issues/$ISSUE" 2>/dev/null); then
+            echo "::error::Issue #$ISSUE does not exist in $GH_REPO."
+            exit 1
+          fi
+
+          if [ "$(printf '%s' "$payload" | jq 'has("pull_request")')" = "true" ]; then
+            echo "::error::#$ISSUE is a pull request, not an issue."
+            exit 1
+          fi
+
+          if [ "$(printf '%s' "$payload" | jq '[.labels[].name] | index("status:approved") != null')" != "true" ]; then
+            echo "::error::Issue #$ISSUE is missing the status:approved label."
+            exit 1
+          fi
+
+          echo "Issue #$ISSUE is approved."
+
+  type-label:
+    name: Check PR Has type:* Label
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Count type:* labels
+        env:
+          LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+        run: |
+          set -euo pipefail
+
+          matched=$(printf '%s' "$LABELS" | jq -r '[.[] | select(startswith("type:"))] | join(", ")')
+          count=$(printf '%s' "$LABELS" | jq '[.[] | select(startswith("type:"))] | length')
+
+          if [ "$count" -eq 0 ]; then
+            echo "::error::Add exactly one type:* label to this pull request."
+            exit 1
+          fi
+
+          if [ "$count" -gt 1 ]; then
+            echo "::error::Found $count type:* labels ($matched). Keep exactly one."
+            exit 1
+          fi
+
+          echo "Type label: $matched"

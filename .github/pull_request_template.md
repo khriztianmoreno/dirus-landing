@@ -12,7 +12,10 @@
 
 ### Tickets
 
-[//]: <> "The ticket number associated with this PR"
+[//]: <> "Required: link the approved issue with a closing keyword"
+[//]: <> "PR Validation fails without it, and the issue needs the status:approved label"
+
+Closes #
 
 ### How to test?
 
@@ -23,6 +26,8 @@
 [//]: <> "Screenshots that help understand what you did in this PR"
 
 ### Scope
+
+[//]: <> "Also add the matching type:* label to the PR — exactly one, or PR Validation fails"
 
 - [ ] 🐞 Bugfix (non-breaking changes that fix an issue)
 - [ ] 💚 Improvement (non-breaking change that adds/modifies functionality to an existing feature)

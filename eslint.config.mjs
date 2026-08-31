@@ -14,6 +14,13 @@ const eslintConfig = defineConfig([
     files: ["**/*.{js,jsx,ts,tsx,mjs,mts}"],
     rules: {
       ...jsxA11y.flatConfigs.recommended.rules,
+      // Allow _-prefixed variables that are destructured only to be omitted
+      // from a rest spread (e.g. `_as` in Button.tsx). The underscore prefix
+      // is the conventional signal for "intentionally unused".
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { varsIgnorePattern: "^_", argsIgnorePattern: "^_" },
+      ],
       // Next.js <Link> renders a real anchor, so the rule needs to be told
       // about it to check hrefs correctly.
       "jsx-a11y/anchor-is-valid": [

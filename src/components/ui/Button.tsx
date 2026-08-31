@@ -4,6 +4,7 @@ import type {
   ButtonHTMLAttributes,
   ReactNode,
 } from "react";
+import { cn } from "@/lib/utils";
 
 type ButtonVariant = "primary" | "secondary";
 
@@ -19,6 +20,10 @@ type ButtonAsButton = SharedProps &
     as?: "button";
   };
 
+/**
+ * Links can't be disabled natively — use the button mode (`as="button"`,
+ * the default) for any CTA that needs a disabled state.
+ */
 type ButtonAsLink = SharedProps &
   Omit<
     AnchorHTMLAttributes<HTMLAnchorElement>,
@@ -36,69 +41,74 @@ type ButtonProps = ButtonAsButton | ButtonAsLink;
  * component grows — there is exactly one place to change padding, radius,
  * typography or the focus ring.
  *
- * Colours come from the "Obsidian Infrastructure" tokens in globals.css, never
- * as raw hex: `accent-indigo` for the primary action, `accent-blue` for the
- * focus ring (the token reserved for focus rings and live-state glows), and
- * `graphite` as the ring offset so the halo reads against the page surface.
+ * Colours come from the "Obsidian Infrastructure" tokens in globals.css,
+ * never as raw hex: `accent-indigo` for the primary action, `accent-blue`
+ * for the focus ring, and `background` as the ring offset so the halo reads
+ * against the real page surface, whatever it is today or after the theme
+ * ticket lands.
  */
 const baseStyles =
-  "group inline-flex items-center justify-center gap-2 rounded px-6 py-3 font-mono text-sm font-medium tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-graphite disabled:pointer-events-none disabled:opacity-50";
+  "group inline-flex items-center justify-center gap-2 rounded px-6 py-3 font-mono text-sm font-medium tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50";
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: "bg-accent-indigo text-white hover:bg-accent-indigo/90",
+  primary: "bg-accent-indigo text-ink hover:bg-accent-indigo/90",
   secondary:
     "border border-dark-gray bg-transparent text-ink hover:border-soft-gray hover:bg-white/5",
 };
 
-export function Button(props: ButtonProps) {
-  const {
-    variant = "primary",
-    showArrow = false,
-    children,
-    className,
-    as,
-    ...rest
-  } = props;
-
-  const classes = [baseStyles, variantStyles[variant], className]
-    .filter(Boolean)
-    .join(" ");
-
-  const content = (
-    <>
-      {children}
-      {showArrow && (
-        <span
-          aria-hidden="true"
-          className="inline-block transition-transform group-hover:translate-x-0.5"
-        >
-          →
-        </span>
-      )}
-    </>
+function Arrow() {
+  return (
+    <span
+      aria-hidden="true"
+      className="inline-block transition-transform group-hover:translate-x-0.5"
+    >
+      →
+    </span>
   );
+}
 
-  if (as === "a") {
-    const { href, ...anchorRest } = rest as Omit<
-      AnchorHTMLAttributes<HTMLAnchorElement>,
-      "className" | "children"
-    > & { href: string };
+export function Button(props: ButtonProps) {
+  if (props.as === "a") {
+    const {
+      as: _as,
+      variant = "primary",
+      showArrow = false,
+      children,
+      className,
+      href,
+      ...anchorRest
+    } = props;
 
     return (
-      <Link href={href} className={classes} {...anchorRest}>
-        {content}
+      <Link
+        href={href}
+        className={cn(baseStyles, variantStyles[variant], className)}
+        {...anchorRest}
+      >
+        {children}
+        {showArrow && <Arrow />}
       </Link>
     );
   }
 
-  // Default to type="button" so a Button dropped inside a <form> does not
-  // submit it by accident; a caller that wants a submit button passes
-  // type="submit" and the spread below wins.
-  const buttonRest = rest as ButtonHTMLAttributes<HTMLButtonElement>;
+  const {
+    as: _as,
+    variant = "primary",
+    showArrow = false,
+    children,
+    className,
+    type = "button",
+    ...buttonRest
+  } = props;
 
   return (
-    <button type="button" className={classes} {...buttonRest}>
-      {content}
+    <button
+      type={type}
+      className={cn(baseStyles, variantStyles[variant], className)}
+      {...buttonRest}
+    >
+      {children}
+      {showArrow && <Arrow />}
     </button>
   );
 }

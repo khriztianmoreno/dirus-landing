@@ -97,13 +97,27 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  /* Typography — families are injected by next/font in layout.tsx. */
+  /* Typography — families are injected by next/font in layout.tsx.
+   * --font-body is the body token from the design system; point body at it. */
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-body: var(--font-geist-sans);
+  --font-code: var(--font-jetbrains-mono);
+
+  /* Typography scale — "Obsidian Infrastructure" design system.
+   * Values in rem so text scales with the user's browser font preference.
+   * px equivalents in comments for quick contrast against the design. */
+  --text-display-lg: 4.5rem; /* 72px */
+  --text-headline-lg: 3rem; /* 48px */
+  --text-headline-lg-mobile: 2rem; /* 32px */
+  --text-headline-md: 2rem; /* 32px */
+  --text-body-lg: 1.125rem; /* 18px */
+  --text-body-md: 1rem; /* 16px */
+  --text-label: 0.75rem; /* 12px */
+  --text-code: 0.8125rem; /* 13px */
 }
 
 body {
   background: var(--color-background);
   color: var(--color-foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-body), system-ui, sans-serif;
 }

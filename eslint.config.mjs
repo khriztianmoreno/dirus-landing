@@ -46,6 +46,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Generated test output.
     "coverage/**",
+    // Generated Storybook output.
+    "storybook-static/**",
   ]),
 ]);
 

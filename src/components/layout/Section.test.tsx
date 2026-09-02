@@ -69,4 +69,17 @@ describe("Section", () => {
     expect(section.className).not.toContain("py-16");
     expect(section.className).not.toContain("md:py-24");
   });
+
+  it("accepts an id so the nav can anchor to it", () => {
+    render(
+      <Section id="about" aria-label="About us">
+        <p>Content</p>
+      </Section>,
+    );
+
+    expect(screen.getByRole("region", { name: "About us" })).toHaveAttribute(
+      "id",
+      "about",
+    );
+  });
 });

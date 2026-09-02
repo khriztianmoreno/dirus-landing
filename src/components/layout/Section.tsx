@@ -7,6 +7,8 @@ type SectionPadding = "section" | "none";
 type SectionProps = {
   children: ReactNode;
   className?: string;
+  /** Anchor target, so the page nav can link to this section. */
+  id?: string;
   /**
    * Vertical padding. Use "none" to opt out: a bare `py-*` in `className`
    * cannot cancel the responsive default, because `py-0` and `md:py-24` are
@@ -32,6 +34,7 @@ const SECTION_PADDING: Record<SectionPadding, string> = {
 export function Section({
   children,
   className,
+  id,
   padding = "section",
   "aria-label": ariaLabel,
 }: SectionProps) {
@@ -39,6 +42,7 @@ export function Section({
     <section
       aria-label={ariaLabel}
       className={cn(SECTION_PADDING[padding], className)}
+      id={id}
     >
       {children}
     </section>

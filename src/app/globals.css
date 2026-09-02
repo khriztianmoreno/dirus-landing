@@ -133,6 +133,23 @@
   --text-label--line-height: 1.4;
   --text-code: 0.8125rem; /* 13px */
   --text-code--line-height: 1.5;
+
+  /* Layout tokens — design system "Obsidian Infrastructure".
+   * --container-page generates the max-w-page utility used by Container.
+   * Padding (16/64px) and gutter (24px) are encoded directly as Tailwind
+   * utilities at the component call sites, not as dead tokens here.
+   *
+   * Layout switches to desktop at `md` (768px). Container, Section and Grid
+   * all pivot here; change this comment and all three call sites together. */
+  --container-page: 1440px; /* max-w-page */
+
+  /* Spacing base unit — 4px. Tailwind v4 derives every p-/m-/gap- utility
+   * from this multiplier, so the scale stays consistent in rem.
+   *
+   * This restates Tailwind's own default rather than changing it; it is here
+   * so the base unit is stated with the other layout tokens instead of being
+   * an assumption a reader has to go and confirm in the framework. */
+  --spacing: 0.25rem;
 }
 
 body {

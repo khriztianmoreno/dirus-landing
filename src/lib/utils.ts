@@ -31,6 +31,9 @@ const twMerge = extendTailwindMerge({
         "bg-background",
         "bg-foreground",
       ],
+      // --container-page generates max-w-page, which twMerge would otherwise
+      // keep alongside a core max-w-* instead of letting the later one win.
+      "max-w": ["max-w-page"],
     },
   },
 });

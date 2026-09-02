@@ -144,7 +144,11 @@
   --container-page: 1440px; /* max-w-page */
 
   /* Spacing base unit — 4px. Tailwind v4 derives every p-/m-/gap- utility
-   * from this multiplier, so the scale stays consistent in rem. */
+   * from this multiplier, so the scale stays consistent in rem.
+   *
+   * This restates Tailwind's own default rather than changing it; it is here
+   * so the base unit is stated with the other layout tokens instead of being
+   * an assumption a reader has to go and confirm in the framework. */
   --spacing: 0.25rem;
 }
 

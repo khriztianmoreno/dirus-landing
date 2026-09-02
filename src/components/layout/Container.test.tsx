@@ -38,15 +38,27 @@ describe("Container", () => {
     expect(wrapper.className).toContain("md:px-16");
   });
 
-  it("lets className overrides win", () => {
+  it("drops padding at every breakpoint when padding is none", () => {
     const { container } = render(
-      <Container className="px-0">
+      <Container padding="none">
         <p>Content</p>
       </Container>,
     );
 
     const wrapper = container.firstChild as HTMLElement;
-    expect(wrapper.className).toContain("px-0");
     expect(wrapper.className).not.toContain("px-4");
+    expect(wrapper.className).not.toContain("md:px-16");
+  });
+
+  it("lets a className max-width override win", () => {
+    const { container } = render(
+      <Container className="max-w-none">
+        <p>Content</p>
+      </Container>,
+    );
+
+    const wrapper = container.firstChild as HTMLElement;
+    expect(wrapper.className).toContain("max-w-none");
+    expect(wrapper.className).not.toContain("max-w-page");
   });
 });

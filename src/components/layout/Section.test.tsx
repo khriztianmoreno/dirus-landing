@@ -58,15 +58,15 @@ describe("Section", () => {
     expect(section.className).toContain("md:py-24");
   });
 
-  it("lets className overrides win", () => {
+  it("drops padding at every breakpoint when padding is none", () => {
     const { container } = render(
-      <Section className="py-0">
+      <Section padding="none">
         <p>Content</p>
       </Section>,
     );
 
     const section = container.firstChild as HTMLElement;
-    expect(section.className).toContain("py-0");
     expect(section.className).not.toContain("py-16");
+    expect(section.className).not.toContain("md:py-24");
   });
 });

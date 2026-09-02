@@ -97,13 +97,46 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  /* Typography — families are injected by next/font in layout.tsx. */
+  /* Typography — families are injected by next/font in layout.tsx.
+   *
+   * --font-body and --font-code are the design system names; prefer them at
+   * the call site. --font-sans and --font-mono are Tailwind's own namespace
+   * keys and are kept deliberately: preflight resolves the document default
+   * through --font-sans, and utilities written as font-mono (see
+   * components/ui/Button.tsx) resolve through --font-mono. Dropping either
+   * one silently falls back to Tailwind's system font stack. */
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-body: var(--font-geist-sans);
+  --font-mono: var(--font-jetbrains-mono);
+  --font-code: var(--font-jetbrains-mono);
+
+  /* Typography scale — "Obsidian Infrastructure" design system.
+   *
+   * Values in rem so text scales with the user's browser font preference.
+   * px equivalents in comments for quick contrast against the design.
+   *
+   * Each size ships with its line height, so `text-display-lg` alone renders
+   * correctly and no call site has to remember a matching `leading-*`.
+   * Display and headline sizes are set tight; body sizes stay open enough to
+   * read in long form. */
+  --text-display-lg: 4.5rem; /* 72px */
+  --text-display-lg--line-height: 1.05;
+  --text-headline-lg: 3rem; /* 48px */
+  --text-headline-lg--line-height: 1.1;
+  --text-headline-md: 2rem; /* 32px */
+  --text-headline-md--line-height: 1.15;
+  --text-body-lg: 1.125rem; /* 18px */
+  --text-body-lg--line-height: 1.6;
+  --text-body-md: 1rem; /* 16px */
+  --text-body-md--line-height: 1.6;
+  --text-label: 0.75rem; /* 12px */
+  --text-label--line-height: 1.4;
+  --text-code: 0.8125rem; /* 13px */
+  --text-code--line-height: 1.5;
 }
 
 body {
   background: var(--color-background);
   color: var(--color-foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-body), system-ui, sans-serif;
 }

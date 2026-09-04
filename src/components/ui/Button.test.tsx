@@ -56,12 +56,11 @@ describe("Button", () => {
     expect(screen.getByRole("button")).toBeDisabled();
   });
 
-  it("shows a visible focus state when navigated by keyboard", async () => {
+  it("receives focus when navigated by keyboard", async () => {
     const user = userEvent.setup();
     render(<Button>Focus me</Button>);
     await user.tab();
     expect(screen.getByRole("button")).toHaveFocus();
-    expect(screen.getByRole("button")).toHaveClass("focus-visible:ring-2");
   });
 
   it("calls onClick when clicked", async () => {

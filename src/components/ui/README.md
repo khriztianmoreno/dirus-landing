@@ -1,27 +1,27 @@
 # components/ui
 
-Primitivos de presentación: button, card, link, badge, input, icon.
+Presentation primitives: button, card, link, badge, input, icon.
 
-Nada aquí puede referenciar DIRUS, seguros o alguna página específica. Un
-primitivo que no pueda integrarse en un producto diferente sin modificaciones
-pertenece a `sections/`.
+Nothing here may reference DIRUS, insurance, or any specific page. A
+primitive that cannot be dropped into a different product unchanged belongs
+in `sections/`.
 
-Estos son los componentes que vale la pena probar a fondo — se usan en todas
-partes, así que un defecto aquí se multiplica.
+These are the components worth testing thoroughly — they are used everywhere,
+so a defect here multiplies.
 
-## Convenciones de estados interactivos
+## Interactive state conventions
 
-Todos los elementos interactivos comparten un único lenguaje de foco y hover
-definido en `globals.css` y replicado en las clases Tailwind de cada componente:
+All interactive elements share a single focus and hover language defined in
+`globals.css` and replicated in each component's Tailwind classes:
 
-- **Anillo de foco**: `ring-2 ring-accent-blue ring-offset-2 ring-offset-background`
-  vía `:focus-visible` — solo aparece en navegación por teclado, nunca con
-  clics del mouse.
-- **Hover**: transición de color a 150ms, subrayado elevado para enlaces,
-  aclarado de superficie para botones.
-- **Active/Presionado**: atenuación ligera para feedback táctil.
-- **Disabled**: `pointer-events-none opacity-50` (solo botones — los enlaces
-  no pueden desactivarse nativamente).
+- **Focus ring**: `outline: 2px solid accent-blue` with `outline-offset: 2px`
+  via `:focus-visible` in `@layer base` — only appears on keyboard
+  navigation, never on mouse clicks. Survives forced-colors (High Contrast).
+- **Hover**: 150ms colour transition, elevated underline for links,
+  surface lightening for buttons.
+- **Active/Pressed**: subtle dimming for tactile feedback.
+- **Disabled**: `pointer-events-none opacity-50` (buttons only — links
+  cannot be disabled natively).
 
-Usa el componente `Link` para enlaces de navegación. Usa `Button` para
-acciones y CTAs.
+Use the `Link` component for navigation links. Use `Button` for actions
+and CTAs.

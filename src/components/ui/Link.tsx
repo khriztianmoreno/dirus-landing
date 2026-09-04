@@ -7,7 +7,7 @@ type LinkProps = ComponentProps<typeof NextLink> & {
 };
 
 const linkStyles =
-  "inline-flex items-center gap-1 text-accent-indigo-soft underline underline-offset-2 transition-colors duration-150 hover:text-white hover:decoration-white active:text-accent-indigo-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+  "inline-flex items-center gap-1 text-accent-indigo-soft underline underline-offset-2 transition-colors duration-150 hover:text-white hover:decoration-white active:text-accent-indigo-soft";
 
 export function Link({ className, children, ...props }: LinkProps) {
   return (

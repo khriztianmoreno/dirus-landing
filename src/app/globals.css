@@ -1,14 +1,16 @@
 @import "tailwindcss";
 
 /*
- * Design tokens.
+ * Design tokens — "Obsidian Infrastructure".
  *
- * Tailwind v4 is configured here, in CSS — there is no `tailwind.config.ts`.
- * Every custom property declared inside `@theme` becomes a utility class:
- * `--color-brand-500` generates `bg-brand-500`, `text-brand-500`, and so on.
+ * Tailwind v4 is configured here, in CSS. There is no `tailwind.config.ts`:
+ * every custom property declared inside `@theme` becomes a utility class, so
+ * `--color-graphite` generates `bg-graphite`, `text-graphite`, and so on.
  *
- * M02 (brand identity) fills the sections marked below. Until then this file
- * only carries the neutral surface tokens and the font wiring from the layout.
+ * Base and accent colours are separated by name, not only by comment:
+ * accents are always `accent-*`, so `bg-accent-indigo` announces itself as an
+ * accent at the call site. A reviewer can spot accent overuse by reading the
+ * JSX, without holding the palette in their head.
  */
 
 :root {
@@ -23,22 +25,171 @@
   }
 }
 
+@theme static {
+  /* ---------------------------------------------------------------------
+   * Base — the monochromatic foundation.
+   *
+   * Hierarchy comes from surface brightness rather than drop shadows, so
+   * these four dark values are the whole z-axis: deeper surface, lower value.
+   * ------------------------------------------------------------------ */
+
+  /* Deep backgrounds. "True Black" in the brief. */
+  --color-black: #000000;
+  /* Lowest container. Cards sit here, above the page. */
+  --color-near-black: #0e0e0e;
+  /* Default surface and page background. */
+  --color-graphite: #141313;
+  /* Raised containers: modals, popovers, anything above a card. */
+  --color-graphite-raised: #1c1b1b;
+
+  /* ---------------------------------------------------------------------
+   * Base — foreground.
+   * ------------------------------------------------------------------ */
+
+  /* Reserved for high-priority typography and critical interactive
+   * elements. Body copy uses `ink`; reaching for white everywhere flattens
+   * the hierarchy the brief is built on. */
+  --color-white: #ffffff;
+  /* Default body text — an off-white, not pure white. */
+  --color-ink: #e5e2e1;
+  /* Secondary and muted text. */
+  --color-soft-gray: #c4c7c8;
+  /* Borders, dividers and "ghost border" outlines. */
+  --color-dark-gray: #444748;
+
+  /* ---------------------------------------------------------------------
+   * Accents — "data pulses". Use with extreme restraint.
+   *
+   * These signal activity, connectivity or success. They are not decoration
+   * and not a background wash: an accent on screen should mean something is
+   * happening. If a view shows more than one accent at rest, that view has
+   * a hierarchy problem, not a colour problem.
+   * ------------------------------------------------------------------ */
+
+  /* Focus rings, active input underlines, live-state glows.
+   *
+   * PROVISIONAL. The brief names "electric blue" in prose but gives it no
+   * value anywhere, and its frontmatter contains no blue at all. This hex was
+   * derived from the indigo above to stay in the same family. Confirm it
+   * against the real brand asset before launch — and when you replace it,
+   * update src/styles/tokens.test.ts, which pins this value on purpose so
+   * the swap cannot happen silently. */
+  --color-accent-blue: #3d6bff;
+  /* Primary actions and success states. */
+  --color-accent-indigo: #3626ce;
+  /* Its light counterpart, for text or icons on a dark surface. */
+  --color-accent-indigo-soft: #c3c0ff;
+  /* Rare highlight — the least used colour in the system. */
+  --color-accent-violet: #8c2ae3;
+}
+
+/*
+ * `inline` is required for tokens whose value is another custom property:
+ * it substitutes at the point of use, so the light/dark swap above and the
+ * next/font variables resolve correctly. The palette above deliberately does
+ * NOT use it — a plain @theme also emits each colour as a custom property on
+ * :root, which the glass effects, linear gradients and ghost borders in the
+ * brief need to reference through var().
+ */
 @theme inline {
-  /* Surfaces — placeholder neutrals, replaced by brand tokens in M02. */
+  /* Surfaces currently in use. Mapping these onto the brand palette is a
+   * visual change and belongs to the theme ticket, not to this one. */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  /* Typography — font families are injected by next/font in layout.tsx. */
+  /* Typography — families are injected by next/font in layout.tsx.
+   *
+   * --font-body and --font-code are the design system names; prefer them at
+   * the call site. --font-sans and --font-mono are Tailwind's own namespace
+   * keys and are kept deliberately: preflight resolves the document default
+   * through --font-sans, and utilities written as font-mono (see
+   * components/ui/Button.tsx) resolve through --font-mono. Dropping either
+   * one silently falls back to Tailwind's system font stack. */
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-body: var(--font-geist-sans);
+  --font-mono: var(--font-jetbrains-mono);
+  --font-code: var(--font-jetbrains-mono);
 
-  /* M02 — brand palette goes here (--color-brand-*, --color-accent-*). */
+  /* Typography scale — "Obsidian Infrastructure" design system.
+   *
+   * Values in rem so text scales with the user's browser font preference.
+   * px equivalents in comments for quick contrast against the design.
+   *
+   * Each size ships with its line height, so `text-display-lg` alone renders
+   * correctly and no call site has to remember a matching `leading-*`.
+   * Display and headline sizes are set tight; body sizes stay open enough to
+   * read in long form. */
+  --text-display-lg: 4.5rem; /* 72px */
+  --text-display-lg--line-height: 1.05;
+  --text-headline-lg: 3rem; /* 48px */
+  --text-headline-lg--line-height: 1.1;
+  --text-headline-md: 2rem; /* 32px */
+  --text-headline-md--line-height: 1.15;
+  --text-body-lg: 1.125rem; /* 18px */
+  --text-body-lg--line-height: 1.6;
+  --text-body-md: 1rem; /* 16px */
+  --text-body-md--line-height: 1.6;
+  --text-label: 0.75rem; /* 12px */
+  --text-label--line-height: 1.4;
+  --text-code: 0.8125rem; /* 13px */
+  --text-code--line-height: 1.5;
 
-  /* M02 — type scale, radii and shadows go here. */
+  /* Layout tokens — design system "Obsidian Infrastructure".
+   * --container-page generates the max-w-page utility used by Container.
+   * Padding (16/64px) and gutter (24px) are encoded directly as Tailwind
+   * utilities at the component call sites, not as dead tokens here.
+   *
+   * Layout switches to desktop at `md` (768px). Container, Section and Grid
+   * all pivot here; change this comment and all three call sites together. */
+  --container-page: 1440px; /* max-w-page */
+
+  /* Spacing base unit — 4px. Tailwind v4 derives every p-/m-/gap- utility
+   * from this multiplier, so the scale stays consistent in rem.
+   *
+   * This restates Tailwind's own default rather than changing it; it is here
+   * so the base unit is stated with the other layout tokens instead of being
+   * an assumption a reader has to go and confirm in the framework. */
+  --spacing: 0.25rem;
 }
 
 body {
   background: var(--color-background);
   color: var(--color-foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+/*
+ * Interactive state primitives — "Obsidian Infrastructure".
+ *
+ * These rules establish a single, consistent focus and hover language for
+ * every interactive element on the site. Components layer on top; they
+ * never reimplement the ring or the transition from scratch.
+ *
+ * :focus-visible (not :focus) keeps the ring off mouse clicks — it only
+ * appears when the user navigates by keyboard, which is the signal that
+ * matters for accessibility.
+ *
+ * The outline uses accent-blue (#3d6bff) and survives forced-colors
+ * (Windows High Contrast), unlike box-shadow which is stripped.
+ * Contrast: passes WCAG AA 3 : 1 against dark surfaces.
+ */
+
+@layer base {
+  /* Base focus ring — applies to every focusable element.
+   * Using outline (not box-shadow) so the indicator survives forced-colors.
+   * Inside @layer base so component utilities can override it when needed. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent-blue);
+    outline-offset: 2px;
+  }
+}
+
+/* Reduce motion for users who prefer it. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

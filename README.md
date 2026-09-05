@@ -115,6 +115,21 @@ Branch names use the commit type as their prefix: `feat/`, `fix/`, `chore/`, `do
 
 [Conventional Commits](https://www.conventionalcommits.org): `type(scope): description`.
 
+Two git hooks run, both installed by husky on `pnpm install`:
+
+| Hook         | Runs                                                               | Cost                                              |
+| ------------ | ------------------------------------------------------------------ | ------------------------------------------------- |
+| `pre-commit` | `lint-staged` — ESLint `--fix` then Prettier, on staged files only | ~1.3s here; scales with how many files you staged |
+| `commit-msg` | commitlint against `commitlint.config.mjs`                         | instant                                           |
+
+`lint-staged` fixes what it can and re-stages the result, so formatting never reaches a diff. What it cannot fix — an ESLint error such as an image without `alt` — blocks the commit and reverts the working tree to how you left it.
+
+Typecheck and the test suite are deliberately **not** in the hook. They are project-wide and cannot be scoped to a diff, so they would tax every commit for a signal CI already provides — and slow hooks are precisely why people reach for `--no-verify`.
+
+**This is enforced, not suggested.** A `commit-msg` hook runs [commitlint](https://commitlint.js.org/) against `commitlint.config.mjs`, so a malformed message is rejected before the commit exists. The same check runs in CI over every commit in a pull request, because `--no-verify` skips the hook and a rule that can be skipped silently is a rule nobody follows.
+
+Allowed types: `build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style`, `test`. Subjects are capped at 72 characters — past that GitHub truncates them in list views. Scopes are optional: a change that genuinely spans the repo should not have to invent one. Merge commits are exempt, since their format is GitHub's, not yours.
+
 A commit is one deliverable change, not one file type. Tests belong with the behaviour they verify, and documentation belongs with the change it explains — a separate "update docs" commit misrepresents when the decision was made.
 
 Write the _why_ in the body. The diff already shows what changed; what it cannot show is the alternative you rejected and the reason.
@@ -176,6 +191,22 @@ Branch protection requires the exact context `Typecheck, lint and build`. Renami
 
 `main` requires signed commits. Configure SSH or GPG signing before promoting work there; `develop` does not require it.
 
+### A commit is blocked by lint-staged
+
+ESLint found something it cannot fix automatically — most often a `jsx-a11y` rule, such as an image without `alt`. The output names the file and the rule.
+
+`lint-staged` reverts the working tree to exactly how you left it before failing, so nothing is lost. Fix the reported problem and commit again.
+
+### commitlint warns about `footer-leading-blank` on a perfectly good message
+
+A line in your body starts with a word followed by a colon — `purpose: ...`, `enforcement: ...` — and commitlint reads it as a footer token rather than prose.
+
+It is a warning, not an error: the commit goes through. Rephrase the line if the noise bothers you. The rule stays on because it catches real footers (`BREAKING CHANGE:`, `Refs:`) that genuinely need a blank line before them.
+
+### A commit is rejected before it exists
+
+The `commit-msg` hook ran commitlint and the message does not match the convention. The output names the exact rule. Rewrite the message — do not reach for `--no-verify`, since CI runs the same check over every commit in the pull request and will reject it there instead, after a slower round trip.
+
 ### The dev server shows stale styles or routes
 
 ```bash
@@ -189,6 +220,50 @@ Next.js caches aggressively between runs, and moved or renamed route files are t
 Tailwind CSS v4 is wired through PostCSS (`postcss.config.mjs`) and configured **in CSS**, inside `src/app/globals.css`. There is no `tailwind.config.ts`: v4 replaced the JavaScript config with the `@theme` directive, and every custom property declared there becomes a utility class (`--color-brand-500` produces `bg-brand-500`, `text-brand-500`, …).
 
 Brand tokens land in the `@theme` block, in the sections already marked for M02. Until then the block only carries neutral surfaces and the `next/font` wiring from `layout.tsx`.
+
+### Colour tokens
+
+The palette comes from the "Obsidian Infrastructure" brief and lives in `src/app/globals.css`. Every token generates the full set of utilities, so `--color-graphite` gives `bg-graphite`, `text-graphite`, `border-graphite`.
+
+**Base — the monochromatic foundation.** Hierarchy comes from surface brightness, not drop shadows, so the dark values form a z-axis: the deeper the surface, the lower the value.
+
+| Token             | Value     | Use for                                                 |
+| ----------------- | --------- | ------------------------------------------------------- |
+| `black`           | `#000000` | Deep backgrounds                                        |
+| `near-black`      | `#0e0e0e` | Cards, the layer above the page                         |
+| `graphite`        | `#141313` | Default surface and page background                     |
+| `graphite-raised` | `#1c1b1b` | Modals, popovers, anything above a card                 |
+| `white`           | `#ffffff` | High-priority typography and critical controls **only** |
+| `ink`             | `#e5e2e1` | Default body text                                       |
+| `soft-gray`       | `#c4c7c8` | Secondary and muted text                                |
+| `dark-gray`       | `#444748` | Borders, dividers, ghost outlines                       |
+
+**Accents — "data pulses".**
+
+| Token                | Value     | Use for                                                |
+| -------------------- | --------- | ------------------------------------------------------ |
+| `accent-blue`        | `#3d6bff` | Focus rings, active input underlines, live-state glows |
+| `accent-indigo`      | `#3626ce` | Primary actions, success states                        |
+| `accent-indigo-soft` | `#c3c0ff` | Indigo text or icons on a dark surface                 |
+| `accent-violet`      | `#8c2ae3` | Rare highlight — the least used colour in the system   |
+
+#### How to use them
+
+**Accents are signals, not decoration.** An accent on screen should mean something is happening: focus, activity, a primary action. If a view shows more than one accent at rest, that is a hierarchy problem wearing a colour costume.
+
+**White is not the body text colour.** The brief reserves pure white for high-priority typography, which is why `ink` exists. Using `text-white` everywhere flattens exactly the contrast the design depends on.
+
+**No soft purple gradients.** The generic indigo-to-violet wash reads as "AI startup", which is the opposite of positioning DIRUS as infrastructure. When a gradient is genuinely needed, make it sharp and linear — indigo to transparent — and only to show directionality in a data flow or to carry the logo motif.
+
+**Depth comes from the surface ramp**, not from shadows. Move up the ramp instead of adding a `shadow-*`, and use a `dark-gray` ghost border where a card edge needs definition.
+
+#### Two notes on the source
+
+**`accent-blue` is provisional.** The brief names "electric blue" in prose but never gives it a value, and its frontmatter contains no blue at all. `#3d6bff` was derived from the brief's own indigo hue to stay coherent with the family. It needs confirming against the real brand asset before any launch.
+
+**The brief contradicts itself on the surface ramp.** Its prose gives `#000` / `#0A0A0A` / `#141414`, its frontmatter `#0e0e0e` / `#141313` / `#1c1b1b`. The frontmatter values were used, since they are the machine-readable half and internally consistent across all surface roles.
+
+`src/styles/tokens.test.ts` asserts every value against this table and fails if a hex drifts, so a colour change has to be a deliberate edit to the brief, not a nudge that fixes one screen and moves the system.
 
 ### Content detection
 

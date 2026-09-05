@@ -49,7 +49,7 @@ const baseStyles =
   "group inline-flex items-center justify-center gap-2 rounded px-6 py-3 font-mono text-sm font-medium tracking-wide transition-colors disabled:pointer-events-none disabled:opacity-50";
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: "bg-accent-indigo text-ink hover:bg-accent-indigo/90",
+  primary: "bg-white text-near-black hover:bg-white/90",
   secondary:
     "border border-dark-gray bg-transparent text-ink hover:border-soft-gray hover:bg-white/5",
 };

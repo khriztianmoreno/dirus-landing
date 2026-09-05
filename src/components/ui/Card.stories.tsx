@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
-import { Grid } from "../layout/Grid";
+import { Grid } from "@/components/layout/Grid";
 import { Card } from "./Card";
 
 function BoltIcon() {
@@ -101,6 +101,7 @@ export const WithIcon: Story = {
 };
 
 export const HeadingH2: Story = {
+  name: "Heading level h2",
   args: {
     headingLevel: "h2",
     title: "Plomería",
@@ -109,6 +110,7 @@ export const HeadingH2: Story = {
 };
 
 export const HeadingH4: Story = {
+  name: "Heading level h4",
   args: {
     headingLevel: "h4",
     title: "Carpintería",
@@ -117,7 +119,10 @@ export const HeadingH4: Story = {
 };
 
 export const InGrid: Story = {
-  parameters: { controls: { disable: true } },
+  parameters: {
+    layout: "padded",
+    controls: { disable: true },
+  },
   render: () => (
     <Grid columns={3}>
       <Card

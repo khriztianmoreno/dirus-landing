@@ -157,3 +157,39 @@ body {
   color: var(--color-foreground);
   font-family: var(--font-body), system-ui, sans-serif;
 }
+
+/*
+ * Interactive state primitives — "Obsidian Infrastructure".
+ *
+ * These rules establish a single, consistent focus and hover language for
+ * every interactive element on the site. Components layer on top; they
+ * never reimplement the ring or the transition from scratch.
+ *
+ * :focus-visible (not :focus) keeps the ring off mouse clicks — it only
+ * appears when the user navigates by keyboard, which is the signal that
+ * matters for accessibility.
+ *
+ * The outline uses accent-blue (#3d6bff) and survives forced-colors
+ * (Windows High Contrast), unlike box-shadow which is stripped.
+ * Contrast: passes WCAG AA 3 : 1 against dark surfaces.
+ */
+
+@layer base {
+  /* Base focus ring — applies to every focusable element.
+   * Using outline (not box-shadow) so the indicator survives forced-colors.
+   * Inside @layer base so component utilities can override it when needed. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent-blue);
+    outline-offset: 2px;
+  }
+}
+
+/* Reduce motion for users who prefer it. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

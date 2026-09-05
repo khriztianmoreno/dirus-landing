@@ -41,14 +41,12 @@ type ButtonProps = ButtonAsButton | ButtonAsLink;
  * component grows — there is exactly one place to change padding, radius,
  * typography or the focus ring.
  *
- * Colours come from the "Obsidian Infrastructure" tokens in globals.css,
- * never as raw hex: `accent-indigo` for the primary action, `accent-blue`
- * for the focus ring, and `background` as the ring offset so the halo reads
- * against the real page surface, whatever it is today or after the theme
- * ticket lands.
+ * Focus ring: the global :focus-visible in globals.css (@layer base) owns the
+ * outline. Component utilities can override it when a button needs a different
+ * indicator, but the default comes from one place.
  */
 const baseStyles =
-  "group inline-flex items-center justify-center gap-2 rounded px-6 py-3 font-mono text-sm font-medium tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50";
+  "group inline-flex items-center justify-center gap-2 rounded px-6 py-3 font-mono text-sm font-medium tracking-wide transition-colors disabled:pointer-events-none disabled:opacity-50";
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary: "bg-accent-indigo text-ink hover:bg-accent-indigo/90",

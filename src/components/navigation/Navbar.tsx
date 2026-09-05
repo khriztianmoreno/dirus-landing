@@ -77,7 +77,7 @@ export function Navbar({ locale, copy, className }: NavbarProps) {
           <div className="flex items-center gap-6">
             <LanguageSwitcher currentLocale={locale} />
             <div className="hidden md:block">
-              <Button variant="primary" showArrow as="a" href="#contact">
+              <Button variant="primary" as="a" href="#contact">
                 {copy.cta}
               </Button>
             </div>

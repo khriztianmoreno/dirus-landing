@@ -101,6 +101,7 @@ function Sheet({ children }: { children: ReactNode }) {
 
 const meta: Meta = {
   title: "Design System/Typography",
+  tags: ["autodocs"],
   parameters: {
     layout: "fullscreen",
     docs: {

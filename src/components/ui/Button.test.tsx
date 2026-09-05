@@ -17,17 +17,17 @@ describe("Button", () => {
   });
 
   it("allows overriding the type", () => {
-    render(<Button type="submit">Enviar</Button>);
+    render(<Button type="submit">Submit</Button>);
     expect(screen.getByRole("button")).toHaveAttribute("type", "submit");
   });
 
   it("renders as a link when as='a'", () => {
     render(
       <Button as="a" href="/pricing">
-        Ver precios
+        View pricing
       </Button>,
     );
-    const link = screen.getByRole("link", { name: "Ver precios" });
+    const link = screen.getByRole("link", { name: "View pricing" });
     expect(link).toHaveAttribute("href", "/pricing");
   });
 
@@ -42,12 +42,12 @@ describe("Button", () => {
   });
 
   it("shows the arrow pattern when showArrow is true", () => {
-    render(<Button showArrow>Continuar</Button>);
+    render(<Button showArrow>Continue</Button>);
     expect(screen.getByText("→")).toBeInTheDocument();
   });
 
   it("does not show the arrow by default", () => {
-    render(<Button>Continuar</Button>);
+    render(<Button>Continue</Button>);
     expect(screen.queryByText("→")).not.toBeInTheDocument();
   });
 

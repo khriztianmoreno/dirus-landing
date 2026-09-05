@@ -4,20 +4,20 @@ import { expect, userEvent, within } from "storybook/test";
 import { Button } from "./Button";
 
 const meta: Meta<typeof Button> = {
-  title: "UI/Button",
+  title: "Design System/Button",
   component: Button,
   parameters: {
     layout: "centered",
     docs: {
       description: {
         component:
-          "The primary call to action. Renders a `<button>` by default, or a " +
-          'Next `<Link>` with `as="a"`, which then requires `href`. Links ' +
-          "cannot be disabled natively, so any CTA that needs a disabled " +
-          "state has to stay in button mode.",
+          "Interactive button component for primary and secondary calls to action. " +
+          'Renders a native `<button>` by default or a Next.js `<Link>` when `as="a"` (with required `href`). ' +
+          "Supports optional trailing arrow indicator and disabled state for button mode.",
       },
     },
   },
+  tags: ["autodocs"],
   args: {
     children: "Request a demo",
     variant: "primary",
@@ -27,15 +27,26 @@ const meta: Meta<typeof Button> = {
     variant: {
       control: "inline-radio",
       options: ["primary", "secondary"],
-      description: "Which colour token pair the button wears.",
+      description: "Color token variant",
     },
     showArrow: {
       control: "boolean",
-      description: "Appends a decorative arrow that slides on hover.",
+      description:
+        "Appends a decorative directional arrow indicator that animates on hover",
+    },
+    as: {
+      control: "inline-radio",
+      options: ["button", "a"],
+      description:
+        "Element type to render (`button` for actions, `a` for links)",
     },
     disabled: {
       control: "boolean",
-      description: 'Button mode only. Ignored when `as="a"`.',
+      description: 'Disabled state (button mode only; ignored when `as="a"`)',
+    },
+    children: {
+      control: "text",
+      description: "Button content label or elements",
     },
   },
 };
@@ -47,41 +58,52 @@ type Story = StoryObj<typeof Button>;
 export const Primary: Story = {};
 
 export const Secondary: Story = {
-  args: { variant: "secondary" },
+  args: {
+    variant: "secondary",
+    children: "Read the docs",
+  },
 };
 
 export const WithArrow: Story = {
-  args: { showArrow: true },
+  args: {
+    showArrow: true,
+    children: "Get started",
+  },
 };
 
 export const Disabled: Story = {
-  args: { disabled: true },
+  args: {
+    disabled: true,
+    children: "Unavailable",
+  },
   parameters: {
     docs: {
       description: {
         story:
-          "Pointer events are off and opacity drops, but the element stays " +
-          "in the accessibility tree as a disabled button rather than " +
-          "disappearing from it.",
+          "Disabled state for native button mode. Disables pointer events and reduces opacity, remaining accessible in the DOM tree.",
       },
     },
   },
 };
 
 export const AsLink: Story = {
-  args: { as: "a", href: "/contact", showArrow: true },
+  args: {
+    as: "a",
+    href: "/contact",
+    showArrow: true,
+    children: "Contact sales",
+  },
   parameters: {
     docs: {
       description: {
         story:
-          "Same skin, different element. It renders a real anchor, so it " +
-          "reaches the keyboard, the context menu and open-in-new-tab.",
+          "Renders as a Next.js Link / HTML anchor element (`<a>`). Provides native link behavior while sharing identical button styling.",
       },
     },
   },
 };
 
-/** Both variants together, which is the only way to judge whether they still belong to one family. */
+/** Both variants displayed together for visual comparison across primary, secondary, arrow, and disabled states. */
 export const Variants: Story = {
   parameters: { controls: { disable: true } },
   render: () => (
@@ -98,11 +120,7 @@ export const Variants: Story = {
   ),
 };
 
-/**
- * The focus ring only appears for keyboard users, because the base styles use
- * `focus-visible` and not `focus`. A screenshot cannot show that, so this
- * story tabs to the button and leaves it focused.
- */
+/** Focus ring behavior test for keyboard navigation (`focus-visible`). */
 export const KeyboardFocus: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

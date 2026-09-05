@@ -6,39 +6,58 @@ describe("Card", () => {
   it("renders the title and description", () => {
     render(
       <Card
-        title="Instalación eléctrica"
-        description="Cambio de tomacorrientes y breakers."
+        title="Quote Processing"
+        description="Automated quote extraction and carrier filing."
       />,
     );
-    expect(screen.getByText("Instalación eléctrica")).toBeInTheDocument();
+    expect(screen.getByText("Quote Processing")).toBeInTheDocument();
     expect(
-      screen.getByText("Cambio de tomacorrientes y breakers."),
+      screen.getByText("Automated quote extraction and carrier filing."),
     ).toBeInTheDocument();
   });
 
+  it("renders the eyebrow tag when provided", () => {
+    render(<Card eyebrow="AUTO-EXTRACTION" title="Quote Processing" />);
+    expect(screen.getByText("AUTO-EXTRACTION")).toBeInTheDocument();
+  });
+
+  it("renders without a description when omitted", () => {
+    render(<Card eyebrow="PROACTIVE" title="Renewals" />);
+    expect(screen.getByText("Renewals")).toBeInTheDocument();
+    expect(screen.queryByRole("paragraph")).not.toBeInTheDocument();
+  });
+
   it("renders the title as a semantic heading by default", () => {
-    render(<Card title="Plomería" description="Reparación de fugas." />);
+    render(
+      <Card
+        title="Plumbing Services"
+        description="Leak repairs and fixture replacements."
+      />,
+    );
     expect(
-      screen.getByRole("heading", { level: 3, name: "Plomería" }),
+      screen.getByRole("heading", { level: 3, name: "Plumbing Services" }),
     ).toBeInTheDocument();
   });
 
   it("allows overriding the heading level", () => {
     render(
       <Card
-        title="Carpintería"
-        description="Muebles a medida."
+        title="Custom Carpentry"
+        description="Bespoke furniture and woodwork repairs."
         headingLevel="h2"
       />,
     );
     expect(
-      screen.getByRole("heading", { level: 2, name: "Carpintería" }),
+      screen.getByRole("heading", { level: 2, name: "Custom Carpentry" }),
     ).toBeInTheDocument();
   });
 
   it("does not render an icon when none is provided", () => {
     const { container } = render(
-      <Card title="Pintura" description="Interior y exterior." />,
+      <Card
+        title="Painting Services"
+        description="Interior and exterior painting."
+      />,
     );
     expect(
       container.querySelector('[aria-hidden="true"]'),
@@ -48,8 +67,8 @@ describe("Card", () => {
   it("renders the icon and hides it from screen readers", () => {
     render(
       <Card
-        title="Jardinería"
-        description="Poda y mantenimiento."
+        title="Landscaping"
+        description="Pruning and lawn maintenance."
         icon={<svg data-testid="icon" />}
       />,
     );
@@ -62,8 +81,8 @@ describe("Card", () => {
   it("merges a custom className with the base styles", () => {
     const { container } = render(
       <Card
-        title="Cerrajería"
-        description="Cambio de cerraduras."
+        title="Locksmith Services"
+        description="Lock replacement and key management."
         className="w-64"
       />,
     );

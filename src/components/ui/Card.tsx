@@ -1,9 +1,13 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { Eyebrow } from "./Eyebrow";
+import { Heading } from "./Heading";
+import { Text } from "./Text";
 
-type CardProps = {
+export type CardProps = {
   title: string;
-  description: string;
+  description?: string;
+  eyebrow?: string;
   icon?: ReactNode;
   headingLevel?: "h2" | "h3" | "h4";
   className?: string;
@@ -12,26 +16,41 @@ type CardProps = {
 export function Card({
   title,
   description,
+  eyebrow,
   icon,
-  headingLevel: Heading = "h3",
+  headingLevel: HeadingTag = "h3",
   className,
 }: CardProps) {
   return (
     <div
       className={cn(
-        "flex flex-col gap-3 rounded border border-dark-gray bg-transparent p-6 transition-colors hover:border-soft-gray",
+        "group flex flex-col justify-between gap-6 rounded-lg border border-dark-gray bg-near-black/60 p-6 md:p-8 transition-all duration-300 hover:border-soft-gray",
         className,
       )}
     >
       {icon && (
-        <span aria-hidden="true" className="text-accent-indigo">
+        <span
+          aria-hidden="true"
+          className="text-soft-gray transition-colors group-hover:text-accent-indigo-soft"
+        >
           {icon}
         </span>
       )}
-      <Heading className="font-mono text-sm font-medium tracking-wide text-ink">
-        {title}
-      </Heading>
-      <p className="text-sm text-soft-gray">{description}</p>
+      <div className="flex flex-col gap-2">
+        {eyebrow && <Eyebrow color="accent">{eyebrow}</Eyebrow>}
+        <Heading
+          level={3}
+          as={HeadingTag}
+          className="font-sans text-body-lg font-semibold tracking-tight text-ink"
+        >
+          {title}
+        </Heading>
+        {description && (
+          <Text muted variant="md" className="mt-1">
+            {description}
+          </Text>
+        )}
+      </div>
     </div>
   );
 }

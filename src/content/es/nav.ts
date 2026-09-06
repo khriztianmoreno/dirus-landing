@@ -1,9 +1,12 @@
 export const nav = {
-  architecture: "Arquitectura",
-  solutions: "Soluciones",
-  reliability: "Fiabilidad",
-  company: "Empresa",
-  cta: "Hablar con DIRUS",
+  badge: "Para Brokers",
+  problem: "Problema",
+  howItWorks: "Cómo Funciona",
+  benefits: "Beneficios",
+  useCases: "Casos Reales",
+  comparison: "Diferencia",
+  faq: "Preguntas",
+  cta: "Solicitar demo",
   openMenu: "Abrir menú",
   closeMenu: "Cerrar menú",
 };

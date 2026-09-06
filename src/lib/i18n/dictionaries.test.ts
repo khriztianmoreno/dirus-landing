@@ -6,12 +6,12 @@ import { getDictionary } from "./dictionaries";
 describe("getDictionary", () => {
   it("returns Spanish copy for es", () => {
     expect(getDictionary("es").home.title).toMatch(/corredores/i);
-    expect(getDictionary("es").nav.architecture).toBe("Arquitectura");
+    expect(getDictionary("es").nav.problem).toBe("Problema");
   });
 
   it("returns English copy for en", () => {
     expect(getDictionary("en").home.title).toMatch(/brokers/i);
-    expect(getDictionary("en").nav.architecture).toBe("Architecture");
+    expect(getDictionary("en").nav.problem).toBe("Problem");
   });
 
   it("returns the same keys for every locale", () => {

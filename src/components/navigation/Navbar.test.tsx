@@ -9,36 +9,39 @@ describe("Navbar", () => {
     render(<Navbar locale="es" copy={esNav} />);
 
     expect(screen.getByText("DIRUS")).toBeInTheDocument();
-    expect(screen.getByText("Arquitectura")).toHaveAttribute(
+    expect(screen.getByText("Problema")).toHaveAttribute(
       "href",
-      "#architecture",
+      "#el-problema",
     );
-    expect(screen.getByText("Soluciones")).toHaveAttribute(
+    expect(screen.getByText("Cómo Funciona")).toHaveAttribute(
       "href",
-      "#solutions",
+      "#como-funciona",
     );
-    expect(screen.getByText("Fiabilidad")).toHaveAttribute(
+    expect(screen.getByText("Beneficios")).toHaveAttribute(
       "href",
-      "#reliability",
+      "#beneficios",
     );
-    expect(screen.getByText("Empresa")).toHaveAttribute("href", "#company");
-    expect(screen.getByText("Hablar con DIRUS")).toBeInTheDocument();
+    expect(screen.getByText("Casos Reales")).toHaveAttribute(
+      "href",
+      "#casos-de-uso",
+    );
+    expect(screen.getByText("Solicitar demo")).toBeInTheDocument();
   });
 
   it("renders navigation links and CTA in English", () => {
     render(<Navbar locale="en" copy={enNav} />);
 
-    expect(screen.getByText("Architecture")).toHaveAttribute(
+    expect(screen.getByText("Problem")).toHaveAttribute("href", "#el-problema");
+    expect(screen.getByText("How It Works")).toHaveAttribute(
       "href",
-      "#architecture",
+      "#como-funciona",
     );
-    expect(screen.getByText("Solutions")).toHaveAttribute("href", "#solutions");
-    expect(screen.getByText("Reliability")).toHaveAttribute(
+    expect(screen.getByText("Benefits")).toHaveAttribute("href", "#beneficios");
+    expect(screen.getByText("Use Cases")).toHaveAttribute(
       "href",
-      "#reliability",
+      "#casos-de-uso",
     );
-    expect(screen.getByText("Company")).toHaveAttribute("href", "#company");
-    expect(screen.getByText("Talk to DIRUS")).toBeInTheDocument();
+    expect(screen.getByText("Request demo")).toBeInTheDocument();
   });
 
   it("highlights current locale in language switcher", () => {
@@ -182,7 +185,7 @@ describe("Navbar", () => {
       const trigger = screen.getByRole("button", { name: esNav.openMenu });
       fireEvent.click(trigger);
 
-      const links = screen.getAllByText(esNav.architecture);
+      const links = screen.getAllByText(esNav.problem);
       expect(links.length).toBeGreaterThan(0);
       const drawerLink = links[links.length - 1];
       expect(drawerLink).toBeDefined();

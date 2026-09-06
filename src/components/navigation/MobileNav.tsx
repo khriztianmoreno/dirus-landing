@@ -153,41 +153,59 @@ export function MobileNav({
 
           {/* Navigation Links */}
           <nav className="mt-6">
-            <ul className="flex flex-col gap-5">
+            <ul className="flex flex-col gap-4">
               <li>
                 <a
-                  href="#architecture"
+                  href="#el-problema"
                   onClick={onClose}
                   className="block font-mono text-body-md uppercase tracking-widest text-soft-gray transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue rounded-sm"
                 >
-                  {copy.architecture}
+                  {copy.problem}
                 </a>
               </li>
               <li>
                 <a
-                  href="#solutions"
+                  href="#como-funciona"
                   onClick={onClose}
                   className="block font-mono text-body-md uppercase tracking-widest text-soft-gray transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue rounded-sm"
                 >
-                  {copy.solutions}
+                  {copy.howItWorks}
                 </a>
               </li>
               <li>
                 <a
-                  href="#reliability"
+                  href="#beneficios"
                   onClick={onClose}
                   className="block font-mono text-body-md uppercase tracking-widest text-soft-gray transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue rounded-sm"
                 >
-                  {copy.reliability}
+                  {copy.benefits}
                 </a>
               </li>
               <li>
                 <a
-                  href="#company"
+                  href="#casos-de-uso"
                   onClick={onClose}
                   className="block font-mono text-body-md uppercase tracking-widest text-soft-gray transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue rounded-sm"
                 >
-                  {copy.company}
+                  {copy.useCases}
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#comparativa"
+                  onClick={onClose}
+                  className="block font-mono text-body-md uppercase tracking-widest text-soft-gray transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue rounded-sm"
+                >
+                  {copy.comparison}
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#faq"
+                  onClick={onClose}
+                  className="block font-mono text-body-md uppercase tracking-widest text-soft-gray transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue rounded-sm"
+                >
+                  {copy.faq}
                 </a>
               </li>
             </ul>
@@ -205,7 +223,8 @@ export function MobileNav({
           <Button
             variant="primary"
             as="a"
-            href="#contact"
+            href="#solicitar-demo"
+            onClick={onClose}
             className="w-full justify-center"
           >
             {copy.cta}

@@ -64,58 +64,79 @@ export function Navbar({
             className="flex items-center justify-between"
           >
             {/* Logo Container */}
-            <Link
-              href={homeHref}
-              className="flex items-center gap-3 rounded-sm transition-transform duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue"
-            >
-              <span className="font-sans text-xl font-bold tracking-tighter text-white">
-                DIRUS
+            <div className="flex items-center gap-3">
+              <Link
+                href={homeHref}
+                className="flex items-center gap-3 rounded-sm transition-transform duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue"
+              >
+                <span className="font-sans text-xl font-bold tracking-tighter text-white">
+                  DIRUS
+                </span>
+              </Link>
+              <span className="hidden font-mono text-[11px] uppercase tracking-wider text-accent-indigo-soft px-2.5 py-0.5 rounded-full border border-accent-indigo-soft/20 bg-accent-indigo/10 sm:inline-block">
+                {copy.badge}
               </span>
-            </Link>
+            </div>
 
             {/* Navigation Links (Desktop) */}
-            <ul className="hidden items-center gap-10 md:flex">
+            <ul className="hidden items-center gap-6 lg:flex">
               <li>
                 <a
-                  href="#architecture"
+                  href="#el-problema"
                   className="font-mono text-label uppercase tracking-widest text-soft-gray transition-colors duration-300 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue rounded-sm"
                 >
-                  {copy.architecture}
+                  {copy.problem}
                 </a>
               </li>
               <li>
                 <a
-                  href="#solutions"
+                  href="#como-funciona"
                   className="font-mono text-label uppercase tracking-widest text-soft-gray transition-colors duration-300 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue rounded-sm"
                 >
-                  {copy.solutions}
+                  {copy.howItWorks}
                 </a>
               </li>
               <li>
                 <a
-                  href="#reliability"
+                  href="#beneficios"
                   className="font-mono text-label uppercase tracking-widest text-soft-gray transition-colors duration-300 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue rounded-sm"
                 >
-                  {copy.reliability}
+                  {copy.benefits}
                 </a>
               </li>
               <li>
                 <a
-                  href="#company"
+                  href="#casos-de-uso"
                   className="font-mono text-label uppercase tracking-widest text-soft-gray transition-colors duration-300 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue rounded-sm"
                 >
-                  {copy.company}
+                  {copy.useCases}
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#comparativa"
+                  className="font-mono text-label uppercase tracking-widest text-soft-gray transition-colors duration-300 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue rounded-sm"
+                >
+                  {copy.comparison}
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#faq"
+                  className="font-mono text-label uppercase tracking-widest text-soft-gray transition-colors duration-300 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue rounded-sm"
+                >
+                  {copy.faq}
                 </a>
               </li>
             </ul>
 
             {/* Right Actions: Language Switcher + CTA (Desktop) & Hamburger Trigger (Mobile) */}
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4">
               <div className="hidden md:block">
                 <LanguageSwitcher currentLocale={locale} />
               </div>
               <div className="hidden md:block">
-                <Button variant="primary" as="a" href="#contact">
+                <Button variant="primary" as="a" href="#solicitar-demo">
                   {copy.cta}
                 </Button>
               </div>

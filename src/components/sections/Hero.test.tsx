@@ -10,7 +10,7 @@ describe("Hero", () => {
     render(<Hero dictionary={getDictionary("es")} />);
 
     expect(
-      screen.getByRole("heading", { level: 1, name: /corredores/i }),
+      screen.getByRole("heading", { level: 1, name: /broker/i }),
     ).toBeInTheDocument();
   });
 
@@ -18,7 +18,7 @@ describe("Hero", () => {
     render(<Hero dictionary={getDictionary("en")} />);
 
     expect(
-      screen.getByRole("heading", { level: 1, name: /brokers/i }),
+      screen.getByRole("heading", { level: 1, name: /broker/i }),
     ).toBeInTheDocument();
   });
 

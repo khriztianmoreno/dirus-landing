@@ -49,7 +49,7 @@ export function Navbar({
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out",
         isScrolled
-          ? "border-b border-white/10 bg-graphite/80 py-3.5 shadow-lg shadow-black/40 backdrop-blur-2xl supports-[not-(backdrop-filter:blur(0))]:bg-graphite-raised"
+          ? "border-b border-white/10 bg-graphite-raised/90 supports-[backdrop-filter]:bg-graphite/80 py-3.5 shadow-lg shadow-black/40 backdrop-blur-2xl"
           : "border-b border-transparent bg-transparent py-5",
         className,
       )}

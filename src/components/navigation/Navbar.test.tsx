@@ -68,7 +68,7 @@ describe("Navbar", () => {
 
     const header = container.querySelector("header");
     expect(header).toHaveAttribute("data-scrolled", "true");
-    expect(header).toHaveClass("bg-graphite/80");
+    expect(header).toHaveClass("supports-[backdrop-filter]:bg-graphite/80");
     expect(header).toHaveClass("backdrop-blur-2xl");
     expect(header).toHaveClass("border-white/10");
   });

@@ -19,6 +19,8 @@ export type NavCopy = {
   reliability: string;
   company: string;
   cta: string;
+  openMenu: string;
+  closeMenu: string;
 };
 
 export type Dictionary = {

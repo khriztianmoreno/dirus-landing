@@ -34,6 +34,29 @@ describe("LayerStack", () => {
     expect(container.innerHTML).toContain("border-accent-indigo");
   });
 
+  it("renders a layer's content slot when given one", () => {
+    // Every fixture layer so far is title + subtitle, so the content branch
+    // had never rendered once. It is the slot the page sections will use.
+    render(
+      <LayerStack
+        layers={[
+          {
+            id: "layer-3",
+            title: "Layer 3",
+            content: <p>Extra detail</p>,
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getByText("Extra detail")).toBeInTheDocument();
+  });
+
+  it("omits the content wrapper when a layer has none", () => {
+    render(<LayerStack layers={sampleLayers} />);
+    expect(screen.queryByText("Extra detail")).not.toBeInTheDocument();
+  });
+
   it("hides connectors when showConnectors is false", () => {
     const { container } = render(
       <LayerStack layers={sampleLayers} showConnectors={false} />,

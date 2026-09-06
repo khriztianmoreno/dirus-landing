@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
+
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
 import type { Locale } from "@/lib/i18n/config";
@@ -9,16 +13,44 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 export type NavbarProps = {
   locale: Locale;
   copy: NavCopy;
+  /**
+   * Optional manual override for scrolled sticky state (useful for Storybook and tests).
+   */
+  scrolled?: boolean;
   className?: string;
 };
 
-export function Navbar({ locale, copy, className }: NavbarProps) {
+export function Navbar({
+  locale,
+  copy,
+  scrolled: scrolledProp,
+  className,
+}: NavbarProps) {
+  const [scrolledState, setScrolledState] = useState(false);
+  const isScrolled = scrolledProp ?? scrolledState;
+
+  useEffect(() => {
+    if (typeof scrolledProp === "boolean") return;
+
+    const handleScroll = () => {
+      setScrolledState(window.scrollY > 20);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [scrolledProp]);
+
   const homeHref = `/${locale}`;
 
   return (
     <header
+      data-scrolled={isScrolled}
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-graphite/40 backdrop-blur-2xl transition-all duration-300 py-4",
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out",
+        isScrolled
+          ? "border-b border-white/10 bg-graphite-raised/90 supports-[backdrop-filter]:bg-graphite/80 py-3.5 shadow-lg shadow-black/40 backdrop-blur-2xl"
+          : "border-b border-transparent bg-transparent py-5",
         className,
       )}
     >
@@ -30,7 +62,7 @@ export function Navbar({ locale, copy, className }: NavbarProps) {
           {/* Logo Container */}
           <Link
             href={homeHref}
-            className="flex items-center gap-3 transition-transform duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue rounded-sm"
+            className="flex items-center gap-3 rounded-sm transition-transform duration-200 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue"
           >
             <span className="font-sans text-xl font-bold tracking-tighter text-white">
               DIRUS

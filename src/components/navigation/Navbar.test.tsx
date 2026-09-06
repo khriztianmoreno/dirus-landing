@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { nav as enNav } from "@/content/en/nav";
 import { nav as esNav } from "@/content/es/nav";
@@ -49,5 +49,58 @@ describe("Navbar", () => {
 
     expect(esLink).toHaveAttribute("aria-current", "page");
     expect(enLink).not.toHaveAttribute("aria-current");
+  });
+
+  it("applies transparent background at rest when top of page", () => {
+    const { container } = render(
+      <Navbar locale="es" copy={esNav} scrolled={false} />,
+    );
+
+    const header = container.querySelector("header");
+    expect(header).toHaveAttribute("data-scrolled", "false");
+    expect(header).toHaveClass("bg-transparent");
+  });
+
+  it("applies glassmorphic background and border when scrolled is true", () => {
+    const { container } = render(
+      <Navbar locale="es" copy={esNav} scrolled={true} />,
+    );
+
+    const header = container.querySelector("header");
+    expect(header).toHaveAttribute("data-scrolled", "true");
+    expect(header).toHaveClass("supports-[backdrop-filter]:bg-graphite/80");
+    expect(header).toHaveClass("backdrop-blur-2xl");
+    expect(header).toHaveClass("border-white/10");
+  });
+
+  it("dynamically transitions state when window scrolls past threshold", () => {
+    const { container } = render(<Navbar locale="es" copy={esNav} />);
+    const header = container.querySelector("header");
+
+    expect(header).toHaveAttribute("data-scrolled", "false");
+
+    // Scroll down past threshold
+    act(() => {
+      Object.defineProperty(window, "scrollY", {
+        value: 50,
+        writable: true,
+        configurable: true,
+      });
+      fireEvent.scroll(window);
+    });
+
+    expect(header).toHaveAttribute("data-scrolled", "true");
+
+    // Scroll back to top
+    act(() => {
+      Object.defineProperty(window, "scrollY", {
+        value: 0,
+        writable: true,
+        configurable: true,
+      });
+      fireEvent.scroll(window);
+    });
+
+    expect(header).toHaveAttribute("data-scrolled", "false");
   });
 });

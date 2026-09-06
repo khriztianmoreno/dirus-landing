@@ -4,4 +4,6 @@ export const nav = {
   reliability: "Reliability",
   company: "Company",
   cta: "Talk to DIRUS",
+  openMenu: "Open menu",
+  closeMenu: "Close menu",
 };

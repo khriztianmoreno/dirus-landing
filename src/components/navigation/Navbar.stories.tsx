@@ -87,3 +87,16 @@ export const ScrollTransitionDemo: Story = {
     </div>
   ),
 };
+
+export const MobileViewport: Story = {
+  name: "Mobile Viewport",
+  parameters: {
+    viewport: {
+      defaultViewport: "mobile1",
+    },
+  },
+  args: {
+    locale: "es",
+    copy: esNav,
+  },
+};

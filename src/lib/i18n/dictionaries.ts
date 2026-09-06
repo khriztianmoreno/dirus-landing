@@ -8,20 +8,8 @@ import type { Locale } from "./config";
 /**
  * The copy contract every locale must satisfy.
  */
-export type HomeCopy = {
-  title: string;
-  description: string;
-};
-
-export type NavCopy = {
-  architecture: string;
-  solutions: string;
-  reliability: string;
-  company: string;
-  cta: string;
-  openMenu: string;
-  closeMenu: string;
-};
+export type HomeCopy = typeof esHome;
+export type NavCopy = typeof esNav;
 
 export type Dictionary = {
   home: HomeCopy;

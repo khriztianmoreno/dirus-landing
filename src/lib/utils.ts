@@ -31,6 +31,34 @@ const twMerge = extendTailwindMerge({
         "bg-background",
         "bg-foreground",
       ],
+      "text-color": [
+        // Base palette
+        "text-black",
+        "text-near-black",
+        "text-graphite",
+        "text-graphite-raised",
+        "text-white",
+        "text-ink",
+        "text-soft-gray",
+        "text-dark-gray",
+        // Accent palette
+        "text-accent-blue",
+        "text-accent-indigo",
+        "text-accent-indigo-soft",
+        "text-accent-violet",
+        // Semantic aliases
+        "text-background",
+        "text-foreground",
+      ],
+      "font-size": [
+        "text-display-lg",
+        "text-headline-lg",
+        "text-headline-md",
+        "text-body-lg",
+        "text-body-md",
+        "text-label",
+        "text-code",
+      ],
       // --container-page generates max-w-page, which twMerge would otherwise
       // keep alongside a core max-w-* instead of letting the later one win.
       "max-w": ["max-w-page"],

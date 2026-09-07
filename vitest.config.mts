@@ -14,6 +14,9 @@ export default defineConfig({
       include: ["src/**/*.{ts,tsx}"],
       exclude: [
         "src/**/*.{test,spec}.{ts,tsx}",
+        // Stories are documentation rendered by Storybook, not shipped code.
+        // Counting them would drag the ratio down for files no user loads.
+        "src/**/*.stories.{ts,tsx}",
         // App Router route files. They are async Server Components, which
         // Vitest cannot render, and they are kept deliberately thin: they
         // resolve params and delegate. The logic they delegate to — lib/ and

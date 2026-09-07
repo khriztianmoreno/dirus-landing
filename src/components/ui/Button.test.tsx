@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { Button } from "./Button";
@@ -17,23 +17,23 @@ describe("Button", () => {
   });
 
   it("allows overriding the type", () => {
-    render(<Button type="submit">Enviar</Button>);
+    render(<Button type="submit">Submit</Button>);
     expect(screen.getByRole("button")).toHaveAttribute("type", "submit");
   });
 
   it("renders as a link when as='a'", () => {
     render(
       <Button as="a" href="/pricing">
-        Ver precios
+        View pricing
       </Button>,
     );
-    const link = screen.getByRole("link", { name: "Ver precios" });
+    const link = screen.getByRole("link", { name: "View pricing" });
     expect(link).toHaveAttribute("href", "/pricing");
   });
 
   it("applies the primary variant by default", () => {
     render(<Button>Primary</Button>);
-    expect(screen.getByRole("button")).toHaveClass("bg-accent-indigo");
+    expect(screen.getByRole("button")).toHaveClass("bg-white");
   });
 
   it("applies the secondary variant when specified", () => {
@@ -42,12 +42,26 @@ describe("Button", () => {
   });
 
   it("shows the arrow pattern when showArrow is true", () => {
-    render(<Button showArrow>Continuar</Button>);
+    render(<Button showArrow>Continue</Button>);
     expect(screen.getByText("→")).toBeInTheDocument();
   });
 
+  it("shows the arrow in link mode too", () => {
+    // The arrow lives in both branches of the component. Testing it only on
+    // the button side leaves the anchor's copy of the line unrun, which is
+    // exactly where a future edit would drop it unnoticed.
+    render(
+      <Button as="a" href="/pricing" showArrow>
+        Continue
+      </Button>,
+    );
+
+    const link = screen.getByRole("link", { name: /Continue/ });
+    expect(within(link).getByText("→")).toBeInTheDocument();
+  });
+
   it("does not show the arrow by default", () => {
-    render(<Button>Continuar</Button>);
+    render(<Button>Continue</Button>);
     expect(screen.queryByText("→")).not.toBeInTheDocument();
   });
 

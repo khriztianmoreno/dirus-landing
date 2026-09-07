@@ -17,7 +17,7 @@ describe("Link", () => {
     expect(link).toHaveClass("underline");
   });
 
-  it("receives focus when navigated by keyboard", async () => {
+  it("recibe foco al navegar con el teclado", async () => {
     const user = userEvent.setup();
     render(<Link href="/contacto">Contacto</Link>);
     await user.tab();
@@ -41,5 +41,16 @@ describe("Link", () => {
       "href",
       "/buscar?q=hola",
     );
+  });
+
+  it("agrega rel='noopener noreferrer' por seguridad en enlaces externos con target='_blank'", () => {
+    render(
+      <Link href="https://example.com" target="_blank">
+        Sitio externo
+      </Link>,
+    );
+    const link = screen.getByRole("link", { name: "Sitio externo" });
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });
 });

@@ -73,7 +73,7 @@ export function Navbar({
                   DIRUS
                 </span>
               </Link>
-              <span className="hidden font-mono text-[11px] uppercase tracking-wider text-accent-indigo-soft px-2.5 py-0.5 rounded-full border border-accent-indigo-soft/20 bg-accent-indigo/10 sm:inline-block">
+              <span className="hidden font-mono text-xs uppercase tracking-wider text-accent-indigo-soft px-2.5 py-0.5 rounded-full border border-accent-indigo-soft/20 bg-accent-indigo/10 sm:inline-block">
                 {copy.badge}
               </span>
             </div>

@@ -20,4 +20,11 @@ export const home = {
       step4: "Listo",
     },
   },
+  problem: {
+    eyebrow: "EL PROBLEMA",
+    title: "La operación no debería detener tus ventas.",
+    description:
+      "Múltiples portales, entrada de datos interminable y seguimientos manuales convierten cada oportunidad en una montaña de tareas. El trabajo operativo se acumula y lo primero que se descuida es vender.",
+    closing: "Cada venta genera trabajo. DIRUS se encarga de él.",
+  },
 };

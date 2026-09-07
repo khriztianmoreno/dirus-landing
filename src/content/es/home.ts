@@ -26,5 +26,18 @@ export const home = {
     description:
       "Múltiples portales, entrada de datos interminable y seguimientos manuales convierten cada oportunidad en una montaña de tareas. El trabajo operativo se acumula y lo primero que se descuida es vender.",
     closing: "Cada venta genera trabajo. DIRUS se encarga de él.",
+    chaos: {
+      noise: "Estado: Ruido",
+      center: "DIRUS",
+      nodes: [
+        { id: "whatsapp", title: "WhatsApp" },
+        { id: "email", title: "Correos" },
+        { id: "pdf", title: "PDFs" },
+        { id: "forms", title: "Formularios" },
+        { id: "renewals", title: "Renovaciones" },
+        { id: "docs", title: "Documentos" },
+        { id: "portals", title: "Portales" },
+      ],
+    },
   },
 };

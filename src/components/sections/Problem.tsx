@@ -3,18 +3,18 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Heading } from "@/components/ui/Heading";
 import { Text } from "@/components/ui/Text";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
+import { OperationalNoise } from "./OperationalNoise";
 
 type ProblemProps = {
   dictionary: Dictionary;
 };
 
 /**
- * Presentational Problem section for DIRUS Brokers landing page (Issue #19).
+ * Presentational Problem section for DIRUS Brokers landing page (Issues #19/#20).
  * Renders the eyebrow tag, section headline, the operational pain described
- * in plain copy, and the closing statement that hands the work back to DIRUS.
- *
- * The copy alone must communicate the whole operational problem, without
- * relying on the chaos-to-order visual (which ships separately in Issue #20).
+ * in plain copy, the closing statement that hands the work back to DIRUS,
+ * and the scroll-reveal visual where scattered operational elements
+ * converge toward a central DIRUS core.
  */
 export function Problem({ dictionary }: ProblemProps) {
   const { problem } = dictionary.home;
@@ -33,6 +33,12 @@ export function Problem({ dictionary }: ProblemProps) {
         </Text>
 
         <Text className="max-w-2xl mx-auto">{problem.closing}</Text>
+
+        <OperationalNoise
+          nodes={problem.chaos.nodes}
+          centerLabel={problem.chaos.center}
+          className="mt-12 md:mt-16"
+        />
       </Container>
     </section>
   );

@@ -1,5 +1,8 @@
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/Button";
+import { Eyebrow } from "@/components/ui/Eyebrow";
+import { Heading } from "@/components/ui/Heading";
+import { Text } from "@/components/ui/Text";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 
 type HeroProps = {
@@ -10,40 +13,44 @@ type HeroProps = {
  * Presentational Hero section for DIRUS Brokers landing page (Issue #17).
  * Renders eyebrow badge with pulse node, gradient headline, subtitle,
  * primary CTA button with microcopy, and the operational flow pill.
+ *
+ * Responsive behavior (Issue #18): the layout stacks on mobile so the
+ * headline and CTAs stay above the fold with no horizontal overflow, then
+ * opens up at the `md` (768px) desktop breakpoint used across the site.
  */
 export function Hero({ dictionary }: HeroProps) {
   const { hero } = dictionary.home;
 
   return (
-    <section className="relative min-h-[92vh] flex items-center justify-center px-4 md:px-16 overflow-hidden py-16 md:py-24">
-      <Container className="relative z-10 max-w-5xl mx-auto text-center flex flex-col items-center gap-8 pt-8 pb-16">
+    <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden py-14 md:py-24">
+      <Container className="relative z-10 max-w-5xl mx-auto text-center flex flex-col items-center gap-7 md:gap-10 pt-8 pb-16">
         {/* Eyebrow badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-accent-indigo-soft/30 bg-accent-indigo/10 font-mono text-xs tracking-wider uppercase text-accent-indigo-soft">
+        <Eyebrow className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-accent-indigo-soft/30 bg-accent-indigo/10">
           <span className="w-2 h-2 rounded-full bg-accent-indigo animate-pulse" />
-          <span>{hero.badge}</span>
-        </div>
+          {hero.badge}
+        </Eyebrow>
 
         {/* H1 Headline */}
-        <h1 className="font-sans text-4xl sm:text-5xl md:text-display-lg text-white font-bold tracking-tight max-w-4xl leading-tight">
+        <Heading level="display" className="max-w-4xl break-words">
           {hero.titleStart}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-accent-indigo-soft to-accent-indigo-soft/80">
             {hero.titleHighlight}
           </span>
           {hero.titleEnd}
-        </h1>
+        </Heading>
 
         {/* Subtitle */}
-        <p className="font-sans text-lg md:text-body-lg text-soft-gray max-w-3xl mx-auto leading-relaxed">
+        <Text variant="lg" muted className="max-w-3xl mx-auto">
           {hero.subtitle}
-        </p>
+        </Text>
 
         {/* CTA & Microcopy */}
-        <div className="flex flex-col items-center gap-3 mt-4">
+        <div className="flex flex-col sm:flex-row items-center gap-3 mt-4 w-full sm:w-auto">
           <Button
             variant="primary"
             as="a"
             href="#solicitar-demo"
-            className="px-9 py-4 text-sm font-mono tracking-wider uppercase shadow-[0_0_25px_rgba(255,255,255,0.18)] group"
+            className="w-full sm:w-auto text-center px-9 py-4 text-sm font-mono tracking-wider uppercase shadow-[0_0_25px_rgba(255,255,255,0.18)] group"
           >
             <span>{hero.cta}</span>
             <svg
@@ -61,14 +68,14 @@ export function Hero({ dictionary }: HeroProps) {
               />
             </svg>
           </Button>
-          <p className="font-mono text-xs text-soft-gray/70 max-w-xl text-center">
+          <p className="font-mono text-xs text-soft-gray/70 max-w-xl text-center px-4 sm:px-0">
             {hero.microcopy}
           </p>
         </div>
 
         {/* Operational Flow Pill */}
-        <div className="mt-8 max-w-full overflow-x-auto py-2">
-          <div className="inline-flex items-center gap-3 font-mono text-xs text-soft-gray bg-graphite-raised/80 backdrop-blur-md px-5 py-3 rounded-full border border-white/10 shadow-lg whitespace-nowrap">
+        <div className="mt-8 w-full max-w-full overflow-x-auto py-2">
+          <div className="inline-flex items-center gap-3 font-mono text-[11px] sm:text-xs md:text-xs text-soft-gray bg-graphite-raised/80 backdrop-blur-md px-4 py-3 md:px-5 rounded-full border border-white/10 shadow-lg whitespace-nowrap">
             <div className="flex items-center gap-1.5 text-white font-medium">
               <svg
                 className="w-4 h-4 text-emerald-400"

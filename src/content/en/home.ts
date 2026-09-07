@@ -21,4 +21,24 @@ export const home = {
       step4: "Ready",
     },
   },
+  problem: {
+    eyebrow: "THE PROBLEM",
+    title: "Operations should never stop your sales.",
+    description:
+      "Multiple portals, endless data entry and manual follow-ups turn every opportunity into a mountain of tasks. Operational work piles up, and selling is the first thing that gets neglected.",
+    closing: "Every sale generates work. DIRUS takes care of it.",
+    chaos: {
+      noise: "State: Noise",
+      center: "DIRUS",
+      nodes: [
+        { id: "whatsapp", title: "WhatsApp" },
+        { id: "email", title: "Emails" },
+        { id: "pdf", title: "PDFs" },
+        { id: "forms", title: "Forms" },
+        { id: "renewals", title: "Renewals" },
+        { id: "docs", title: "Documents" },
+        { id: "portals", title: "Portals" },
+      ],
+    },
+  },
 };

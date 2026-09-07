@@ -177,6 +177,17 @@ body {
   }
 }
 
+/* Animated signal pulse along a connector path. Renders a single short dash
+ * travelling along the drawn line, used by ConnectorLine's `animated` mode. */
+@keyframes flow {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 /* Reduce motion for users who prefer it. */
 @media (prefers-reduced-motion: reduce) {
   *,

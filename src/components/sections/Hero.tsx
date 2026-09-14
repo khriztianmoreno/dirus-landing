@@ -75,7 +75,7 @@ export function Hero({ dictionary }: HeroProps) {
 
         {/* Operational Flow Pill */}
         <div className="mt-8 w-full max-w-full overflow-x-auto py-2">
-          <div className="inline-flex items-center gap-3 font-mono text-[11px] sm:text-xs md:text-xs text-soft-gray bg-graphite-raised/80 backdrop-blur-md px-4 py-3 md:px-5 rounded-full border border-white/10 shadow-lg whitespace-nowrap">
+          <div className="inline-flex items-center gap-3 font-mono text-xs text-soft-gray bg-graphite-raised/80 backdrop-blur-md px-4 py-3 md:px-5 rounded-full border border-white/10 shadow-lg whitespace-nowrap">
             <div className="flex items-center gap-1.5 text-white font-medium">
               <svg
                 className="w-4 h-4 text-emerald-400"

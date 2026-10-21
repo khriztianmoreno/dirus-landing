@@ -5,12 +5,12 @@ import { getDictionary } from "./dictionaries";
 
 describe("getDictionary", () => {
   it("returns Spanish copy for es", () => {
-    expect(getDictionary("es").home.title).toMatch(/broker/i);
+    expect(getDictionary("es").home.title).toMatch(/corredores/i);
     expect(getDictionary("es").nav.problem).toBe("Problema");
   });
 
   it("returns English copy for en", () => {
-    expect(getDictionary("en").home.title).toMatch(/broker/i);
+    expect(getDictionary("en").home.title).toMatch(/brokers/i);
     expect(getDictionary("en").nav.problem).toBe("Problem");
   });
 

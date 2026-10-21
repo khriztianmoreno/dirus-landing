@@ -5,11 +5,10 @@ import { nav as esNav } from "@/content/es/nav";
 import { Navbar } from "./Navbar";
 
 describe("Navbar", () => {
-  it("renders DIRUS logo, badge, navigation links, and CTA in Spanish", () => {
+  it("renders DIRUS logo, navigation links, and CTA in Spanish", () => {
     render(<Navbar locale="es" copy={esNav} />);
 
     expect(screen.getByText("DIRUS")).toBeInTheDocument();
-    expect(screen.getByText("Para Brokers")).toBeInTheDocument();
     expect(screen.getByText("Problema")).toHaveAttribute(
       "href",
       "#el-problema",
@@ -29,10 +28,9 @@ describe("Navbar", () => {
     expect(screen.getByText("Solicitar demo")).toBeInTheDocument();
   });
 
-  it("renders badge, navigation links and CTA in English", () => {
+  it("renders navigation links and CTA in English", () => {
     render(<Navbar locale="en" copy={enNav} />);
 
-    expect(screen.getByText("For Brokers")).toBeInTheDocument();
     expect(screen.getByText("Problem")).toHaveAttribute("href", "#el-problema");
     expect(screen.getByText("How It Works")).toHaveAttribute(
       "href",

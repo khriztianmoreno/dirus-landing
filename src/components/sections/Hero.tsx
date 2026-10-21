@@ -7,16 +7,15 @@ type HeroProps = {
 };
 
 /**
- * Presentational Hero section for DIRUS Brokers landing page (Issue #17).
- * Renders eyebrow badge with pulse node, gradient headline, subtitle,
- * primary CTA button with microcopy, and the operational flow pill.
+ * Hero section for DIRUS Brokers landing page.
+ * Displays value proposition, CTA, and operational flow pill.
  */
 export function Hero({ dictionary }: HeroProps) {
   const { hero } = dictionary.home;
 
   return (
-    <section className="relative min-h-[92vh] flex items-center justify-center px-4 md:px-16 overflow-hidden py-16 md:py-24">
-      <Container className="relative z-10 max-w-5xl mx-auto text-center flex flex-col items-center gap-8 pt-8 pb-16">
+    <section className="relative min-h-[85vh] flex flex-col justify-center items-center overflow-hidden py-20 md:py-28">
+      <Container className="relative z-10 flex flex-col items-center text-center gap-8">
         {/* Eyebrow badge */}
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-accent-indigo-soft/30 bg-accent-indigo/10 font-mono text-xs tracking-wider uppercase text-accent-indigo-soft">
           <span className="w-2 h-2 rounded-full bg-accent-indigo animate-pulse" />
@@ -24,26 +23,26 @@ export function Hero({ dictionary }: HeroProps) {
         </div>
 
         {/* H1 Headline */}
-        <h1 className="font-sans text-4xl sm:text-5xl md:text-display-lg text-white font-bold tracking-tight max-w-4xl leading-tight">
+        <h1 className="max-w-4xl font-sans text-4xl sm:text-5xl md:text-display-lg font-bold tracking-tight text-white leading-tight">
           {hero.titleStart}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-accent-indigo-soft to-accent-indigo-soft/80">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-accent-indigo-soft to-white">
             {hero.titleHighlight}
           </span>
           {hero.titleEnd}
         </h1>
 
         {/* Subtitle */}
-        <p className="font-sans text-lg md:text-body-lg text-soft-gray max-w-3xl mx-auto leading-relaxed">
+        <p className="max-w-3xl text-body-lg text-soft-gray leading-relaxed">
           {hero.subtitle}
         </p>
 
         {/* CTA & Microcopy */}
-        <div className="flex flex-col items-center gap-3 mt-4">
+        <div className="flex flex-col items-center gap-3 mt-2">
           <Button
             variant="primary"
             as="a"
             href="#solicitar-demo"
-            className="px-9 py-4 text-sm font-mono tracking-wider uppercase shadow-[0_0_25px_rgba(255,255,255,0.18)] group"
+            className="px-8 py-4 text-sm tracking-wider uppercase font-mono shadow-[0_0_25px_rgba(255,255,255,0.15)] group"
           >
             <span>{hero.cta}</span>
             <svg
@@ -67,7 +66,7 @@ export function Hero({ dictionary }: HeroProps) {
         </div>
 
         {/* Operational Flow Pill */}
-        <div className="mt-8 max-w-full overflow-x-auto py-2">
+        <div className="mt-6 max-w-full overflow-x-auto py-2">
           <div className="inline-flex items-center gap-3 font-mono text-xs text-soft-gray bg-graphite-raised/80 backdrop-blur-md px-5 py-3 rounded-full border border-white/10 shadow-lg whitespace-nowrap">
             <div className="flex items-center gap-1.5 text-white font-medium">
               <svg

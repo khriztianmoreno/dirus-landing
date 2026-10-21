@@ -51,9 +51,11 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
-      className={`${geistSans.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`dark ${geistSans.variable} ${jetbrainsMono.variable} h-full bg-graphite text-ink antialiased`}
     >
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-full flex-col bg-graphite text-ink">
+        {children}
+      </body>
     </html>
   );
 }

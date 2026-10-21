@@ -29,6 +29,39 @@ describe("ConnectorLine", () => {
     expect(path).toHaveAttribute("d", customD);
   });
 
+  it("dashes the stroke for the dashed variant", () => {
+    const { container } = render(<ConnectorLine variant="dashed" />);
+    expect(container.querySelector("path")).toHaveAttribute(
+      "stroke-dasharray",
+      "4 4",
+    );
+  });
+
+  it("leaves the stroke solid by default", () => {
+    const { container } = render(<ConnectorLine />);
+    expect(container.querySelector("path")).not.toHaveAttribute(
+      "stroke-dasharray",
+    );
+  });
+
+  it("dims the muted colour and uses its token", () => {
+    // muted is the only colour that changes opacity as well as hue, so it is
+    // the one that can silently stop reading as a background connector.
+    const { container } = render(<ConnectorLine color="muted" />);
+    const path = container.querySelector("path");
+
+    expect(path).toHaveAttribute("stroke", "#444748");
+    expect(path).toHaveAttribute("stroke-opacity", "0.4");
+  });
+
+  it("keeps full opacity for the other colours", () => {
+    const { container } = render(<ConnectorLine color="error" />);
+    const path = container.querySelector("path");
+
+    expect(path).toHaveAttribute("stroke", "#ef4444");
+    expect(path).toHaveAttribute("stroke-opacity", "0.7");
+  });
+
   it("renders pulse animation path when animated is true", () => {
     const { container } = render(<ConnectorLine animated />);
     const paths = container.querySelectorAll("path");

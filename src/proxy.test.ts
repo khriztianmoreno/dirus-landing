@@ -14,11 +14,11 @@ function locationOf(response: Response | undefined) {
 }
 
 describe("proxy", () => {
-  it("redirects the site root to the detected locale", () => {
-    const response = proxy(request("/", "en-GB,en;q=0.9"));
+  it("redirects the site root to Spanish by default", () => {
+    const response = proxy(request("/"));
 
     expect(response?.status).toBe(307);
-    expect(locationOf(response)).toBe("https://dirus.test/en");
+    expect(locationOf(response)).toBe("https://dirus.test/es");
   });
 
   it("redirects the root to Spanish when no preference is sent", () => {

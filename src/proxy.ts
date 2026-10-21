@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-import { locales } from "@/lib/i18n/config";
-import { resolveLocale } from "@/lib/i18n/detect";
+import { defaultLocale, locales } from "@/lib/i18n/config";
 
 // Matches a pathname whose first segment is shaped like a language tag:
 // "/fr", "/pt-BR", "/fr/pricing". Every route in this app lives under
@@ -35,7 +34,7 @@ export function proxy(request: NextRequest) {
   // invalid locale with a 307 pointing at a page that does not exist.
   if (LOCALE_SHAPED_PATH.test(pathname)) return;
 
-  const locale = resolveLocale(request.headers.get("accept-language"));
+  const locale = defaultLocale;
   const url = request.nextUrl.clone();
   url.pathname = `/${locale}${pathname}`;
 
